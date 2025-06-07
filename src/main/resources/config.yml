@@ -1,0 +1,46 @@
+create:
+  # 在第一行匹配时，创建收费门
+  sign-line: '$lock'
+  # 默认价格
+  default-price: 0
+
+# 收费铁门牌子内容
+lock-sign:
+  - '<dark_aqua>[<aqua><b>收费门<dark_aqua>]'
+  - '%price% 金币'
+  - '<u>%player%'
+  - '%flags%'
+
+money:
+  # 价格显示格式
+  format: '%.1f'
+  # 如果价格是整数，去除小数部分
+  # 注释该选项关闭这个功能
+  replace-empty: '.0'
+
+# 标志显示内容
+flags:
+  # 显示顺序
+  order:
+    - can-enter
+    - can-leave
+    - no-items
+    - no-money
+    - no-potions
+  # 显示内容
+  display:
+    can-enter:
+      with: '进'
+      none: ''
+    can-leave:
+      with: '出'
+      none: ''
+    no-items:
+      with: '空'
+      none: ''
+    no-money:
+      with: '钱'
+      none: ''
+    no-potions:
+      with: '效'
+      none: ''

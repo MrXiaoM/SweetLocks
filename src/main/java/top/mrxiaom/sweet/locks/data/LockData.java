@@ -80,6 +80,10 @@ public class LockData {
         return flags;
     }
 
+    public boolean hasFlag(String flag) {
+        return flags.contains(flag);
+    }
+
     public void setFlags(@NotNull List<String> flags) {
         this.flags = flags;
     }
@@ -99,10 +103,12 @@ public class LockData {
 
     public void save(@NotNull List<String> signLines) {
         SignEditor.set(sign, this, signLines);
+        sign.update();
     }
 
     public void remove(@NotNull List<String> signLines) {
         SignEditor.set(sign, null, signLines);
+        sign.update();
     }
 
     public void remove() {
