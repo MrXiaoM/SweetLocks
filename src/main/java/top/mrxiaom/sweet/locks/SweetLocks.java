@@ -10,6 +10,7 @@ import top.mrxiaom.pluginbase.BukkitPlugin;
 import top.mrxiaom.pluginbase.economy.EnumEconomy;
 import top.mrxiaom.pluginbase.economy.IEconomy;
 import org.jetbrains.annotations.NotNull;
+import top.mrxiaom.pluginbase.func.LanguageManager;
 import top.mrxiaom.pluginbase.utils.scheduler.FoliaLibScheduler;
 
 import java.util.ArrayList;
@@ -64,6 +65,13 @@ public class SweetLocks extends BukkitPlugin {
         MinecraftVersion.disableBStats();
         MinecraftVersion.getVersion();
         SignEditor.init();
+    }
+
+    @Override
+    protected void beforeEnable() {
+        LanguageManager.inst()
+                .setLangFile("messages.yml")
+                .register(Messages.class, Messages::holder);
     }
 
     @Override

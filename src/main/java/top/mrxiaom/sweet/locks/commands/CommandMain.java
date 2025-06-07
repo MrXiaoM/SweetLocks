@@ -9,6 +9,7 @@ import org.bukkit.event.Listener;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import top.mrxiaom.pluginbase.func.AutoRegister;
+import top.mrxiaom.sweet.locks.Messages;
 import top.mrxiaom.sweet.locks.SweetLocks;
 import top.mrxiaom.sweet.locks.func.AbstractModule;
 
@@ -23,21 +24,16 @@ public class CommandMain extends AbstractModule implements CommandExecutor, TabC
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-        if (args.length == 1 && "hello".equalsIgnoreCase(args[0])) {
-            return t(sender, "Hello World!");
-        }
         if (args.length == 1 && "reload".equalsIgnoreCase(args[0]) && sender.isOp()) {
             plugin.reloadConfig();
-            return t(sender, "&a配置文件已重载");
+            return Messages.commands__reload.tm(sender);
         }
-        return true;
+        return (sender.isOp() ? Messages.commands__help__operator : Messages.commands__help__player).tm(sender);
     }
 
-    private static final List<String> emptyList = Lists.newArrayList();
-    private static final List<String> listArg0 = Lists.newArrayList(
-            "hello");
-    private static final List<String> listOpArg0 = Lists.newArrayList(
-            "hello", "reload");
+    private static final List<String> emptyList = Collections.emptyList();
+    private static final List<String> listArg0 = emptyList;
+    private static final List<String> listOpArg0 = Lists.newArrayList("reload");
     @Nullable
     @Override
     public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String[] args) {
