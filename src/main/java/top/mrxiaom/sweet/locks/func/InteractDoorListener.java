@@ -122,6 +122,7 @@ public class InteractDoorListener extends AbstractModule implements Listener {
                 IEconomy economy = plugin.getEconomy();
                 if (economy.has(player, price)) {
                     economy.takeMoney(player, price);
+                    economy.giveMoney(data.getOwner(), price); // TODO: 增加税收
                 } else {
                     Messages.door__money_not_enough.tm(player);
                     return;
@@ -130,6 +131,7 @@ public class InteractDoorListener extends AbstractModule implements Listener {
             // 进出收费门
             plugin.getPlatform().runAtEntity(player, t -> {
                 player.teleport(target);
+                // TODO: 提醒玩家已进入或已离开收费门，并且如果创建者在线，提醒创建者有人进入了他的收费门，获得金币；如果创建者不在线，添加消息到插件数据，下次上线时提醒创建者。
             });
             return;
         }
