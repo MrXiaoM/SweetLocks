@@ -67,6 +67,10 @@ public class LockData {
         this.ownerUUID = owner.getUniqueId().toString();
     }
 
+    public boolean isOwner(@NotNull OfflinePlayer player) {
+        return player.getUniqueId().equals(owner.getUniqueId());
+    }
+
     public double getPrice() {
         return price;
     }
