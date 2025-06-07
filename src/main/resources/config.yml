@@ -1,10 +1,15 @@
+# 插件在哪些世界禁用，世界名区分大小写
+disable-worlds:
+  - disableWorld1
+  - disableWorld2
+
 create:
   # 在第一行匹配时，创建收费门
   sign-line: '$lock'
   # 默认价格
   default-price: 0
 
-# 收费铁门牌子内容
+# 收费铁门牌子内容，支持 MiniMessage
 lock-sign:
   - '<dark_aqua>[<aqua><b>收费门<dark_aqua>]'
   - '%price% 金币'

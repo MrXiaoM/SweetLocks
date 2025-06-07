@@ -32,7 +32,7 @@ public class LocksCreateListener extends AbstractModule implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onSignEdit(SignChangeEvent e) {
-        if (e.isCancelled()) return;
+        if (e.isCancelled() || plugin.isInDisabledWorld(e)) return;
         BlockState state = e.getBlock().getState();
         if (!(state instanceof Sign)) return;
 
