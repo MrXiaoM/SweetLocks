@@ -17,6 +17,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 import top.mrxiaom.pluginbase.economy.IEconomy;
+import top.mrxiaom.pluginbase.economy.NoEconomy;
 import top.mrxiaom.pluginbase.func.AutoRegister;
 import top.mrxiaom.pluginbase.utils.Util;
 import top.mrxiaom.sweet.locks.SignEditor;
@@ -87,7 +88,8 @@ public class InteractDoorListener extends AbstractModule implements Listener {
                     }
                 }
                 if (data.hasFlag("no-money")) { // 钱
-                    if (plugin.getEconomy().get(player) > data.getPrice()) {
+                    IEconomy economy = plugin.getEconomy();
+                    if (!(economy instanceof NoEconomy) && economy.get(player) > data.getPrice()) {
                         // TODO: 提示玩家不能进入
                         return;
                     }

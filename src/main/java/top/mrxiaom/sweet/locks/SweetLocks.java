@@ -28,7 +28,7 @@ public class SweetLocks extends BukkitPlugin {
                 .adventure(true)
                 .database(false)
                 .reconnectDatabaseWhenReloadConfig(false)
-                .economy(EnumEconomy.VAULT)
+                .economy(EnumEconomy.VAULT, true)
                 .scanIgnore("top.mrxiaom.sweet.locks.libs")
         );
         FoliaLibScheduler scheduler = new FoliaLibScheduler(this);
