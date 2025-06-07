@@ -53,6 +53,7 @@ public class InteractDoorListener extends AbstractModule implements Listener {
         Block block = e.getClickedBlock();
         BlockFace clickFace = e.getBlockFace();
         if (block == null || !e.getAction().equals(Action.RIGHT_CLICK_BLOCK)) return;
+        if (plugin.isInDisabledWorld(block)) return;
 
         // 右键点击铁门
         if (isDoorBlock(block)) {
