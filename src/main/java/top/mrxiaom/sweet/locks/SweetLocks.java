@@ -43,6 +43,7 @@ public class SweetLocks extends BukkitPlugin {
         MinecraftVersion.disableUpdateCheck();
         MinecraftVersion.disableBStats();
         MinecraftVersion.getVersion();
+        SignEditor.init();
     }
 
     @Override
