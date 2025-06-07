@@ -11,6 +11,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.SignChangeEvent;
 import top.mrxiaom.pluginbase.func.AutoRegister;
+import top.mrxiaom.sweet.locks.Messages;
 import top.mrxiaom.sweet.locks.SignEditor;
 import top.mrxiaom.sweet.locks.SweetLocks;
 import top.mrxiaom.sweet.locks.data.LockData;
@@ -45,14 +46,14 @@ public class LocksCreateListener extends AbstractModule implements Listener {
         if (createSignLine.equals(line)) {
             BlockFace facing = SignEditor.getWallSignFacing(sign);
             if (facing.equals(BlockFace.UP)) {
-                // 需要放置贴在墙上的告示牌
+                Messages.create__need_wall_sign.tm(player);
                 return;
             }
             InteractDoorListener door = InteractDoorListener.inst();
             Block baseBlock = block.getRelative(facing.getOppositeFace());
             Block doorBlock = baseBlock.getRelative(BlockFace.DOWN);
             if (!door.isDoorBlock(doorBlock) || door.isDoorBlock(baseBlock)) {
-                // 需要告示牌放置在铁门上面的方块上，且铁门上面的方块不能是铁门
+                Messages.create__need_door.tm(player);
                 return;
             }
             SignLinesFormatter formatter = SignLinesFormatter.inst();
@@ -60,7 +61,8 @@ public class LocksCreateListener extends AbstractModule implements Listener {
             data.addFlags("can-enter", "can-leave");
             data.save(formatter.generateLockSignLines(data));
             e.setCancelled(true);
-            // TODO: 提示玩家创建成功
+            Messages.create__success.tm(player);
+            // TODO: 打开收费门编辑菜单
         }
     }
 }

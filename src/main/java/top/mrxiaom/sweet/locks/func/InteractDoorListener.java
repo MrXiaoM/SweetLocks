@@ -19,10 +19,15 @@ import org.jetbrains.annotations.Nullable;
 import top.mrxiaom.pluginbase.economy.IEconomy;
 import top.mrxiaom.pluginbase.economy.NoEconomy;
 import top.mrxiaom.pluginbase.func.AutoRegister;
+import top.mrxiaom.pluginbase.utils.AdventureUtil;
+import top.mrxiaom.pluginbase.utils.ListPair;
+import top.mrxiaom.pluginbase.utils.Pair;
 import top.mrxiaom.pluginbase.utils.Util;
+import top.mrxiaom.sweet.locks.Messages;
 import top.mrxiaom.sweet.locks.SignEditor;
 import top.mrxiaom.sweet.locks.SweetLocks;
 import top.mrxiaom.sweet.locks.data.LockData;
+import top.mrxiaom.sweet.locks.func.entry.FlagDisplay;
 
 import java.util.List;
 
@@ -61,7 +66,11 @@ public class InteractDoorListener extends AbstractModule implements Listener {
             // 是否正在进入收费门
             boolean isEntering = signFace.equals(clickFace);
             if (!player.isSneaking()) {
-                // TODO: 提醒需要支付的金币，以及提醒需要按住 Shift 进出
+                SignLinesFormatter formatter = SignLinesFormatter.inst();
+                ListPair<String, Object> replacements = new ListPair<>();
+                replacements.add("%player%", formatter.formatOwner(data));
+                replacements.add("%price%", formatter.formatPrice(data));
+                (isEntering ? Messages.door__entering : Messages.door__leaving).tm(player, replacements);
                 return;
             }
             // 传送目标
@@ -71,7 +80,7 @@ public class InteractDoorListener extends AbstractModule implements Listener {
             // 判定处理 flags
             if (isEntering) { // 进入时
                 if(!data.hasFlag("can-enter")) { // 进
-                    // TODO: 提示玩家不能进入
+                    Messages.door__can_not_enter.tm(player);
                     return;
                 }
                 if (data.hasFlag("no-items")) { // 空
@@ -83,26 +92,26 @@ public class InteractDoorListener extends AbstractModule implements Listener {
                         }
                     }
                     if (hasItem) {
-                        // TODO: 提示玩家不能进入
+                        Messages.door__has_items.tm(player);
                         return;
                     }
                 }
                 if (data.hasFlag("no-money")) { // 钱
                     IEconomy economy = plugin.getEconomy();
                     if (!(economy instanceof NoEconomy) && economy.get(player) > data.getPrice()) {
-                        // TODO: 提示玩家不能进入
+                        Messages.door__has_money.tm(player);
                         return;
                     }
                 }
                 if (data.hasFlag("no-potions")) { // 效
                     if (!player.getActivePotionEffects().isEmpty()) {
-                        // TODO: 提示玩家不能进入
+                        Messages.door__has_potions.tm(player);
                         return;
                     }
                 }
             } else { // 离开时
                 if (!data.hasFlag("can-leave")) { // 出
-                    // TODO: 提示玩家不能离开
+                    Messages.door__can_not_leave.tm(player);
                     return;
                 }
             }
@@ -113,7 +122,7 @@ public class InteractDoorListener extends AbstractModule implements Listener {
                 if (economy.has(player, price)) {
                     economy.takeMoney(player, price);
                 } else {
-                    // TODO: 提示玩家金币不足
+                    Messages.door__money_not_enough.tm(player);
                     return;
                 }
             }
@@ -133,7 +142,25 @@ public class InteractDoorListener extends AbstractModule implements Listener {
             if (player.isSneaking() && (data.isOwner(player) || player.isOp())) {
                 // TODO: 打开编辑菜单
             } else {
-                // TODO: 查看收费门信息
+                SignLinesFormatter formatter = SignLinesFormatter.inst();
+                Messages messages = data.isOwner(player)
+                        ? Messages.door__information_owner
+                        : Messages.door__information;
+                ListPair<String, Object> replacements = new ListPair<>();
+                replacements.add("%player%", formatter.formatOwner(data));
+                replacements.add("%price%", formatter.formatPrice(data));
+                List<String> list = messages.list(replacements);
+                for (String s : list) {
+                    if (s.equals("flags")) {
+                        for (String flag : data.getFlags()) {
+                            FlagDisplay display = formatter.getFlag(flag);
+                            String info = display != null ? display.info : flag;
+                            Messages.door__flag.tm(player, Pair.of("%flag%", info));
+                        }
+                        continue;
+                    }
+                    AdventureUtil.sendMessage(player, s);
+                }
             }
         }
     }
@@ -142,8 +169,8 @@ public class InteractDoorListener extends AbstractModule implements Listener {
     private boolean isBottomHalfDoor(Block block) {
         if (supportBlockData) {
             org.bukkit.block.data.BlockData data = block.getState().getBlockData();
-            if (data instanceof org.bukkit.block.data.type.Door) {
-                return ((org.bukkit.block.data.type.Door) data).getHalf().equals(org.bukkit.block.data.Bisected.Half.BOTTOM);
+            if (data instanceof org.bukkit.block.data.Bisected) {
+                return ((org.bukkit.block.data.Bisected) data).getHalf().equals(org.bukkit.block.data.Bisected.Half.BOTTOM);
             }
         } else {
             org.bukkit.material.MaterialData data = block.getState().getData();

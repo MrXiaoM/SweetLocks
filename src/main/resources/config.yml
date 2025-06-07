@@ -37,15 +37,20 @@ flags:
     can-enter:
       with: '进'
       none: ''
+      info: '允许进入'
     can-leave:
       with: '出'
       none: ''
+      info: '允许离开'
     no-items:
       with: '空'
       none: ''
+      info: '要求进入时背包为空'
     no-money:
       with: '钱'
       none: ''
+      info: '要求进入时没有金币 (或刚好可支付进入)'
     no-potions:
       with: '效'
       none: ''
+      info: '要求进入时没有药水效果'

@@ -39,8 +39,26 @@ public class SignLinesFormatter extends AbstractModule {
         if (section != null) for (String flag : section.getKeys(false)) {
             String with = section.getString(flag + ".with", flag);
             String none = section.getString(flag + ".none", "");
-            flagsDisplay.put(flag, new FlagDisplay(flag, with, none));
+            String info = section.getString(flag + ".info", with);
+            flagsDisplay.put(flag, new FlagDisplay(flag, with, none, info));
         }
+    }
+
+    @NotNull
+    public String formatOwner(@NotNull LockData data) {
+        OfflinePlayer owner = data.getOwner();
+        String name = owner.getName();
+        return name == null
+                ? owner.getUniqueId().toString()
+                : name;
+    }
+
+    @NotNull
+    public String formatPrice(@NotNull LockData data) {
+        String price = String.format(moneyFormat, data.getPrice());
+        return moneyReplaceEmpty != null
+                ? price.replace(moneyReplaceEmpty, "")
+                : price;
     }
 
     @NotNull
@@ -59,21 +77,18 @@ public class SignLinesFormatter extends AbstractModule {
         return flags.toString();
     }
 
+    @Nullable
+    public FlagDisplay getFlag(String flag) {
+        return flagsDisplay.get(flag);
+    }
+
     @NotNull
     public List<String> generateLockSignLines(@NotNull LockData data) {
         List<String> lines = new ArrayList<>();
-        OfflinePlayer owner = data.getOwner();
-        String name = owner.getName();
-        String price = String.format(moneyFormat, data.getPrice());
-        String flags = formatFlags(data);
         ListPair<String, Object> replacements = new ListPair<>();
-        replacements.add("%player%", name == null
-                ? owner.getUniqueId().toString()
-                : price);
-        replacements.add("%price%", moneyReplaceEmpty != null
-                ? price.replace(moneyReplaceEmpty, "")
-                : price);
-        replacements.add("%flags%", flags);
+        replacements.add("%player%", formatOwner(data));
+        replacements.add("%price%", formatPrice(data));
+        replacements.add("%flags%", formatFlags(data));
         return Pair.replace(lockSign, replacements);
     }
 
