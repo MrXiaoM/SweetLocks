@@ -56,13 +56,15 @@ public class LocksCreateListener extends AbstractModule implements Listener {
                 Messages.create__need_door.tm(player);
                 return;
             }
-            SignLinesFormatter formatter = SignLinesFormatter.inst();
-            LockData data = new LockData(sign, player, createDefaultPrice);
-            data.addFlags("can-enter", "can-leave");
-            data.save(formatter.generateLockSignLines(data));
             e.setCancelled(true);
-            Messages.create__success.tm(player);
-            // TODO: 打开收费门编辑菜单
+            plugin.getPlatform().runAtLocation(sign.getLocation(), t -> {
+                SignLinesFormatter formatter = SignLinesFormatter.inst();
+                LockData data = new LockData(sign, player, createDefaultPrice);
+                data.addFlags("can-enter", "can-leave");
+                data.save(formatter.generateLockSignLines(data));
+                Messages.create__success.tm(player);
+                // TODO: 打开收费门编辑菜单
+            });
         }
     }
 }
