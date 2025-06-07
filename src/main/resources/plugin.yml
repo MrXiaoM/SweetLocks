@@ -1,0 +1,14 @@
+name: SweetLocks
+version: '${version}'
+main: top.mrxiaom.sweet.locks.SweetLocks
+api-version: 1.13
+depend:
+  - Vault
+softdepend:
+  - PlaceholderAPI
+folia-supported: true
+authors: [ MrXiaoM ]
+commands:
+  sweetlocks:
+    description: 'The main command of SweetLocks'
+    aliases: [ slocks, locks, sl ]
