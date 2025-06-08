@@ -54,7 +54,7 @@ prevent-solid-target:
   # 碰撞箱接口从 1.13 开始提供，低于此版本，该选项无效
   min-height: 0.6
   # 其它不属于实心方块的方块
-  # 但能被活塞推动后被破坏的，恒不属于实心方块
+  # 但能被活塞推动后被破坏的，恒不属于实心方块 (活塞推动判定不完全，有些方块没有判定到位)
   # 如果玩家无法传送到收费门对面，请添加方块到这里
   not-solid-materials:
     - STEP
@@ -67,6 +67,10 @@ prevent-solid-target:
     - STATIONARY_WATER
     - LAVA
     - STATIONARY_LAVA
+    - WOODEN_PLATE
+    - STONE_PLATE
+    - IRON_PLATE
+    - GOLD_PLATE
 
 # 标志显示内容
 flags:

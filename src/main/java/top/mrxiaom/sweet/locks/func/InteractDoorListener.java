@@ -67,6 +67,9 @@ public class InteractDoorListener extends AbstractModule implements Listener {
     }
 
     public boolean isSolid(Block block) {
+        if (!block.getType().isSolid()) {
+            return false;
+        }
         if (block.getPistonMoveReaction().equals(PistonMoveReaction.BREAK)) {
             return false;
         }
