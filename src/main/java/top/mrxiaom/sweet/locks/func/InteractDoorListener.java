@@ -84,13 +84,13 @@ public class InteractDoorListener extends AbstractModule implements Listener {
             e.setCancelled(true);
             if (isOffHand(e)) return;
             BlockFace signFace = SignEditor.getWallSignFacing(data.getSign());
+            SignLinesFormatter formatter = SignLinesFormatter.inst();
+            ListPair<String, Object> replacements = new ListPair<>();
+            replacements.add("%player%", formatter.formatOwner(data));
+            replacements.add("%price%", formatter.formatPrice(data));
             // 是否正在进入收费门
             boolean isEntering = signFace.equals(clickFace);
             if (!player.isSneaking()) {
-                SignLinesFormatter formatter = SignLinesFormatter.inst();
-                ListPair<String, Object> replacements = new ListPair<>();
-                replacements.add("%player%", formatter.formatOwner(data));
-                replacements.add("%price%", formatter.formatPrice(data));
                 (isEntering ? Messages.door__entering : Messages.door__leaving).tm(player, replacements);
                 return;
             }
@@ -151,7 +151,15 @@ public class InteractDoorListener extends AbstractModule implements Listener {
             // 进出收费门
             plugin.getPlatform().runAtEntity(player, t -> {
                 plugin.getPlatform().teleportAsync(player, target);
-                // TODO: 提醒玩家已进入或已离开收费门，并且如果创建者在线，提醒创建者有人进入了他的收费门，获得金币；如果创建者不在线，添加消息到插件数据，下次上线时提醒创建者。
+                if (isEntering) {
+                    Messages.door__have_entered.tm(player, replacements);
+                    plugin.getScheduler().runTaskAsync(() -> {
+                        String money = formatter.formatPrice(data); // TODO: 增加税收
+                        OwnerNoticeManager.inst().notice(data.getOwner(), player, data.getSign().getBlock(), money);
+                    });
+                } else {
+                    Messages.door__have_left.tm(player, replacements);
+                }
             });
             return;
         }
