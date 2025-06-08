@@ -149,8 +149,19 @@ public class GuiEditLock extends AbstractGuiModule {
         }
 
         @Override
-        protected Inventory create(InventoryHolder holder, int size, String title) {
+        public void updateInventory(Inventory inv) {
+            super.updateInventory(inv);
             clicked = false;
+        }
+
+        @Override
+        public void updateInventory(InventoryView view) {
+            super.updateInventory(view);
+            clicked = false;
+        }
+
+        @Override
+        protected Inventory create(InventoryHolder holder, int size, String title) {
             String parsedTitle = ColorHelper.parseColor(PAPI.setPlaceholders(player, title));
             return inventory = super.create(this, size, parsedTitle);
         }
