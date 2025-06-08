@@ -21,7 +21,7 @@ create:
 
 # 收费铁门牌子内容，支持 MiniMessage
 lock-sign:
-  - '<dark_aqua>[<aqua><b>收费门<dark_aqua>]'
+  - '<dark_aqua>[<aqua><b>收费门</b><dark_aqua>]'
   - '%price% 金币'
   - '<u>%player%'
   - '%flags%'
