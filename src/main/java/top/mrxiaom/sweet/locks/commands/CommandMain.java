@@ -20,6 +20,7 @@ import java.util.*;
 @AutoRegister
 public class CommandMain extends AbstractModule implements CommandExecutor, TabCompleter, Listener {
     private String createSignLine;
+    private double createLocksPrice;
     public CommandMain(SweetLocks plugin) {
         super(plugin);
         registerCommand("sweetlocks", this);
@@ -28,6 +29,7 @@ public class CommandMain extends AbstractModule implements CommandExecutor, TabC
     @Override
     public void reloadConfig(MemoryConfiguration config) {
         this.createSignLine = config.getString("create.sign-line", "$lock");
+        this.createLocksPrice = config.getDouble("create.create-price", 0.0);
     }
 
     @Override
@@ -36,7 +38,10 @@ public class CommandMain extends AbstractModule implements CommandExecutor, TabC
             plugin.reloadConfig();
             return Messages.commands__reload.tm(sender);
         }
-        return (sender.isOp() ? Messages.commands__help__operator : Messages.commands__help__player).tm(sender, Pair.of("%lock%", createSignLine));
+        return (sender.isOp() ? Messages.commands__help__operator : Messages.commands__help__player).tm(sender,
+                Pair.of("%lock%", createSignLine),
+                Pair.of("%money%", createLocksPrice)
+        );
     }
 
     private static final List<String> emptyList = Collections.emptyList();

@@ -10,7 +10,9 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.SignChangeEvent;
+import top.mrxiaom.pluginbase.economy.IEconomy;
 import top.mrxiaom.pluginbase.func.AutoRegister;
+import top.mrxiaom.pluginbase.utils.Pair;
 import top.mrxiaom.sweet.locks.Messages;
 import top.mrxiaom.sweet.locks.SignEditor;
 import top.mrxiaom.sweet.locks.SweetLocks;
@@ -22,6 +24,7 @@ import java.util.List;
 @AutoRegister
 public class LocksCreateListener extends AbstractModule implements Listener {
     private String createSignLine;
+    private double createLocksPrice;
     private double createDefaultPrice;
     public LocksCreateListener(SweetLocks plugin) {
         super(plugin);
@@ -31,6 +34,7 @@ public class LocksCreateListener extends AbstractModule implements Listener {
     @Override
     public void reloadConfig(MemoryConfiguration config) {
         this.createSignLine = config.getString("create.sign-line", "$lock");
+        this.createLocksPrice = config.getDouble("create.create-price", 0.0);
         this.createDefaultPrice = config.getDouble("create.default-price", 0.0);
     }
 
@@ -56,6 +60,13 @@ public class LocksCreateListener extends AbstractModule implements Listener {
             if (!door.isDoorBlock(doorBlock) || door.isDoorBlock(baseBlock)) {
                 Messages.create__need_door.tm(player);
                 return;
+            }
+            if (createLocksPrice > 0) {
+                IEconomy economy = plugin.getEconomy();
+                if (!economy.has(player, createLocksPrice)) {
+                    Messages.create__money_not_enough.tm(player, Pair.of("%money%", createLocksPrice));
+                }
+                economy.takeMoney(player, createLocksPrice);
             }
             plugin.getPlatform().runAtLocationLater(sign.getLocation(), t -> {
                 SignLinesFormatter formatter = SignLinesFormatter.inst();
