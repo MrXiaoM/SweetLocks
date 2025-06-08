@@ -1,9 +1,5 @@
 package top.mrxiaom.sweet.locks.func;
 
-import com.google.common.collect.Lists;
-import de.tr7zw.changeme.nbtapi.NBT;
-import net.kyori.adventure.platform.bukkit.BukkitComponentSerializer;
-import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -84,19 +80,6 @@ public class InteractDoorListener extends AbstractModule implements Listener {
         Player player = e.getPlayer();
         Block block = e.getClickedBlock();
         BlockFace clickFace = e.getBlockFace();
-        if (block != null && e.getAction().equals(Action.LEFT_CLICK_BLOCK) && !isOffHand(e)) {
-            t(player, "方块 " + block.getType() + " (" + block.getX() + ", " + block.getY() + ", " + block.getZ() + ")");
-            NBT.get(block.getState(), nbt -> {
-                if (nbt.hasTag("Text1")) {
-                    Component component = BukkitComponentSerializer.gson().deserializeOrNull(nbt.getString("Text1"));
-                    String insertion = component == null ? null : component.style().insertion();
-                    if (insertion != null) {
-                        t(player, "insertion: " + insertion);
-                    }
-                }
-                t(player, nbt.toString());
-            });
-        }
         if (block == null || !e.getAction().equals(Action.RIGHT_CLICK_BLOCK)) return;
         if (plugin.isInDisabledWorld(block)) return;
 
