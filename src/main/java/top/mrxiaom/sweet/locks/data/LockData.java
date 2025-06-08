@@ -138,8 +138,6 @@ public class LockData {
 
     public void save(@NotNull List<String> signLines) {
         SignEditor.set(sign, this, signLines);
-        sign = (Sign) sign.getBlock().getState();
-        sign.update();
     }
 
     @Nullable

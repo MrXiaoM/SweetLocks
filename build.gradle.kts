@@ -19,6 +19,7 @@ repositories {
     maven("https://repo.rosewooddev.io/repository/public/")
 }
 
+configurations.create("shadowLink")
 dependencies {
     compileOnly("org.spigotmc:spigot-api:1.20-R0.1-SNAPSHOT")
     // compileOnly("org.spigotmc:spigot:1.20") // NMS
@@ -33,6 +34,12 @@ dependencies {
     implementation("com.github.technicallycoded:FoliaLib:0.4.4")
     implementation("org.jetbrains:annotations:24.0.0")
     implementation("top.mrxiaom:PluginBase:1.4.6")
+    for (nms in project.project(":nms").also {
+        implementation(it)
+    }.subprojects) {
+        if (nms.name == "shared") implementation(nms)
+        if (nms.name.startsWith("v")) add("shadowLink", nms)
+    }
 }
 java {
     val javaVersion = JavaVersion.toVersion(targetJavaVersion)
@@ -43,6 +50,7 @@ java {
 tasks {
     shadowJar {
         archiveClassifier.set("")
+        configurations.add(project.configurations.getByName("shadowLink"))
         mapOf(
             "org.intellij.lang.annotations" to "annotations.intellij",
             "org.jetbrains.annotations" to "annotations.jetbrains",

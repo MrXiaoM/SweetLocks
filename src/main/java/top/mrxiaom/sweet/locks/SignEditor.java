@@ -1,35 +1,61 @@
 package top.mrxiaom.sweet.locks;
 
 import com.google.common.collect.Lists;
+import com.google.gson.*;
 import de.tr7zw.changeme.nbtapi.NBT;
 import de.tr7zw.changeme.nbtapi.iface.ReadWriteNBT;
 import de.tr7zw.changeme.nbtapi.iface.ReadWriteNBTList;
 import de.tr7zw.changeme.nbtapi.utils.MinecraftVersion;
 import net.kyori.adventure.platform.bukkit.BukkitComponentSerializer;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
+import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import top.mrxiaom.pluginbase.utils.Util;
 import top.mrxiaom.sweet.locks.data.LockData;
+import top.mrxiaom.sweet.locks.nms.BlockBukkit;
+import top.mrxiaom.sweet.locks.nms.IBlock;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 
 import static top.mrxiaom.pluginbase.utils.AdventureUtil.miniMessage;
 
 public class SignEditor {
+    private static Gson gson = new GsonBuilder().create();
     private static boolean supportPersistentData;
     private static boolean supportSignSide;
     private static boolean supportBlockData;
     private static @NotNull GsonComponentSerializer serializer = BukkitComponentSerializer.gson();
+    private static IBlock blockNMS;
 
     protected static void init() {
-        supportPersistentData = MinecraftVersion.isAtLeastVersion(MinecraftVersion.MC1_14_R1);
+        supportPersistentData = Util.isPresent("org.bukkit.persistence.PersistentDataContainer");
         supportSignSide = Util.isPresent("org.bukkit.block.sign.SignSide");
         supportBlockData = Util.isPresent("org.bukkit.block.data.BlockData");
+        if (!supportPersistentData) {
+            String packageName = MinecraftVersion.getVersion().getPackageName();
+            try {
+                Class<?> type = Class.forName("top.mrxiaom.sweet.locks.nms.Block_" + packageName);
+                blockNMS = (IBlock) type.getConstructor().newInstance();
+            } catch (Throwable ignored) {
+                throw new IllegalStateException("当前服务器版本 " + packageName + " 不受支持!");
+            }
+        } else {
+            blockNMS = new BlockBukkit();
+        }
+    }
+
+    public static void update(Block block) {
+        blockNMS.update(block);
     }
 
     /**
@@ -72,6 +98,7 @@ public class SignEditor {
         }
         String json = data.saveToJson();
         setRaw(sign, json, signLines);
+        update(sign.getBlock());
     }
 
     private static @Nullable String getRaw(@NotNull Sign sign) {
@@ -86,9 +113,9 @@ public class SignEditor {
             return NBT.get(sign, nbt -> {
                 // 支持 1.14 以下，通过告示牌第一行的 insertion 储存数据
                 if (nbt.hasTag("Text1")) {
-                    Component component = serializer.deserializeOrNull(nbt.getString("Text1"));
-                    String insertion = component == null ? "" : component.style().insertion();
-                    if (insertion.startsWith("SweetLocks:")) {
+                    Component component = serializer.deserialize(nbt.getString("Text1"));
+                    String insertion = component.insertion();
+                    if (insertion != null && insertion.startsWith("SweetLocks:")) {
                         return insertion.substring(11);
                     }
                 }
@@ -129,7 +156,7 @@ public class SignEditor {
         Component component = str.isEmpty() ? Component.text("") : miniMessage(str);
         if (!supportPersistentData && i == 0 && content != null) {
             // 支持 1.14 以下，通过告示牌第一行的 insertion 储存数据
-            return serializer.serialize(component.style(it -> it.insertion("SweetLocks:" + content)));
+            return serializer.serialize(component.insertion("SweetLocks:" + content));
         }
         return serializer.serialize(component);
     }
