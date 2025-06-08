@@ -5,10 +5,12 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
+import org.bukkit.configuration.MemoryConfiguration;
 import org.bukkit.event.Listener;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import top.mrxiaom.pluginbase.func.AutoRegister;
+import top.mrxiaom.pluginbase.utils.Pair;
 import top.mrxiaom.sweet.locks.Messages;
 import top.mrxiaom.sweet.locks.SweetLocks;
 import top.mrxiaom.sweet.locks.func.AbstractModule;
@@ -17,9 +19,15 @@ import java.util.*;
 
 @AutoRegister
 public class CommandMain extends AbstractModule implements CommandExecutor, TabCompleter, Listener {
+    private String createSignLine;
     public CommandMain(SweetLocks plugin) {
         super(plugin);
         registerCommand("sweetlocks", this);
+    }
+
+    @Override
+    public void reloadConfig(MemoryConfiguration config) {
+        this.createSignLine = config.getString("create.sign-line", "$lock");
     }
 
     @Override
@@ -28,7 +36,7 @@ public class CommandMain extends AbstractModule implements CommandExecutor, TabC
             plugin.reloadConfig();
             return Messages.commands__reload.tm(sender);
         }
-        return (sender.isOp() ? Messages.commands__help__operator : Messages.commands__help__player).tm(sender);
+        return (sender.isOp() ? Messages.commands__help__operator : Messages.commands__help__player).tm(sender, Pair.of("%lock%", createSignLine));
     }
 
     private static final List<String> emptyList = Collections.emptyList();
