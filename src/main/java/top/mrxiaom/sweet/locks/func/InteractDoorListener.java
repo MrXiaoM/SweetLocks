@@ -295,6 +295,9 @@ public class InteractDoorListener extends AbstractModule implements Listener {
         int x = block.getX();
         int y = block.getY();
         int z = block.getZ();
+        // TODO: 这里可能依然存在问题，需要更换方法
+        // 1.8    - 在某个方向偏离了1格方块
+        // 1.21.4 - 工作正常
         return new Location(block.getWorld(),
                 x > 0 ? (x - 0.5) : (x + 0.5),
                 y,
