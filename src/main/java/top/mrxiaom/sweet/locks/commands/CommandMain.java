@@ -6,7 +6,6 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.configuration.MemoryConfiguration;
-import org.bukkit.event.Listener;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import top.mrxiaom.pluginbase.func.AutoRegister;
@@ -18,7 +17,7 @@ import top.mrxiaom.sweet.locks.func.AbstractModule;
 import java.util.*;
 
 @AutoRegister
-public class CommandMain extends AbstractModule implements CommandExecutor, TabCompleter, Listener {
+public class CommandMain extends AbstractModule implements CommandExecutor, TabCompleter {
     private String createSignLine;
     private double createLocksPrice;
     public CommandMain(SweetLocks plugin) {
