@@ -1,8 +1,8 @@
 title: '编辑收费门'
 inventory:
   - '框框框框框框框框框'
-  - '框　价　　进出　框'
-  - '框　空钱效　　　框'
+  - '框　价　　距离　框'
+  - '框　进出空钱效　框'
   - '框框框框框框框框框'
 main-icons:
   价:
@@ -19,6 +19,34 @@ main-icons:
       - '&a左键 &7|&f 修改价格'
     prompt:
       tips: '&7[&b收费门&7]&f 请在聊天栏发送&e收费门进入价格&7 (发送&f cancel &7取消设置)'
+      cancel: 'cancel'
+  距:
+    material: ENDER_EYE
+    display: '&e&l进入传送距离'
+    lore:
+      - ''
+      - '&f  进入收费门时，要传送到  '
+      - '&f  门后多少个方块的距离  '
+      - ''
+      - '&f  距离: &e%reach%格'
+      - ''
+      - '&a左键 &7|&f 修改距离'
+    prompt:
+      tips: '&7[&b收费门&7]&f 请在聊天栏发送&e收费门进入传送距离&7 (发送&f cancel &7取消设置)'
+      cancel: 'cancel'
+  离:
+    material: ENDER_EYE
+    display: '&e&l离开传送距离'
+    lore:
+      - ''
+      - '&f  离开收费门时，要传送到  '
+      - '&f  门后多少个方块的距离  '
+      - ''
+      - '&f  距离: &e%reach%格'
+      - ''
+      - '&a左键 &7|&f 修改距离'
+    prompt:
+      tips: '&7[&b收费门&7]&f 请在聊天栏发送&e收费门离开传送距离&7 (发送&f cancel &7取消设置)'
       cancel: 'cancel'
   进:
     material: IRON_DOOR

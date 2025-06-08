@@ -38,6 +38,15 @@ money:
   # 玩家进入收费门时，向创建者收取百分之多少的税收
   tax: '0%'
 
+reach:
+  # 最小和最大的传送距离限制
+  enter:
+    min: 0
+    max: 0
+  leave:
+    min: 0
+    max: 0
+
 # 如果目标传送位置是实心方块，不进行传送
 prevent-solid-target: true
 

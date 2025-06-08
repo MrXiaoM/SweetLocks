@@ -32,14 +32,19 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 @AutoRegister
 public class GuiEditLock extends AbstractGuiModule {
     private final Map<String, String> presetFlagMap = new HashMap<>();
     private final Map<Character, FlagIcon> flagIcons = new HashMap<>();
     private PromptIcon iconPrice;
+    private PromptIcon iconReachEnter;
+    private PromptIcon iconReachLeave;
     private Double priceMin;
     private Double priceMax;
+    private int reachEnterMin, reachEnterMax;
+    private int reachLeaveMin, reachLeaveMax;
     public GuiEditLock(SweetLocks plugin) {
         super(plugin, plugin.resolve("./gui/edit-lock.yml"));
         presetFlagMap.put("进", "can-enter");
@@ -56,6 +61,10 @@ public class GuiEditLock extends AbstractGuiModule {
 
     @Override
     public void reloadConfig(MemoryConfiguration cfg) {
+        reachEnterMin = cfg.getInt("reach.enter.min", 0);
+        reachEnterMax = cfg.getInt("reach.enter.max", 0);
+        reachLeaveMin = cfg.getInt("reach.leave.min", 0);
+        reachLeaveMax = cfg.getInt("reach.leave.max", 0);
         if (!file.exists()) {
             plugin.saveResource("gui/edit-lock.yml", file);
         }
@@ -82,6 +91,19 @@ public class GuiEditLock extends AbstractGuiModule {
             iconPrice = new PromptIcon(icon, promptTips, promptCancel);
             return;
         }
+        if (id.equals("距")) {
+            String promptTips = section.getString(id = ".prompt.tips", "&7[&b收费门&7]&f 请在聊天栏发送&e收费门进入传送距离&7 (发送&f cancel &7取消设置)");
+            String promptCancel = section.getString(id = ".prompt.cancel", "cancel");
+            iconReachEnter = new PromptIcon(icon, promptTips, promptCancel);
+            return;
+        }
+        if (id.equals("离")) {
+            String promptTips = section.getString(id = ".prompt.tips", "&7[&b收费门&7]&f 请在聊天栏发送&e收费门离开传送距离&7 (发送&f cancel &7取消设置)");
+            String promptCancel = section.getString(id = ".prompt.cancel", "cancel");
+            iconReachLeave = new PromptIcon(icon, promptTips, promptCancel);
+            return;
+        }
+
         String flag = presetFlagMap.get(id);
         if (flag != null) {
             char iconId = id.charAt(0);
@@ -177,35 +199,59 @@ public class GuiEditLock extends AbstractGuiModule {
             if (clickedId == null || clicked) return;
             if (clickedId.equals('价')) {
                 // 设置收费门价格
-                clicked = true;
-                player.closeInventory();
-                AdventureUtil.sendMessage(player, iconPrice.promptTips);
-                Prompter.onChat(plugin, player, message -> {
-                    boolean save = false;
-                    if (!message.equals(iconPrice.promptCancel)) {
-                        Double price = Util.parseDouble(message).orElse(null);
-                        if (price != null) {
-                            if (priceMin != null && price < priceMin) {
-                                Messages.price__min_limited.tm(player, Pair.of("%money%", priceMin));
-                            } else if (priceMax != null && price > priceMax) {
-                                Messages.price__max_limited.tm(player, Pair.of("%money%", priceMax));
-                            } else {
-                                data.setPrice(price);
-                                save = true;
-                            }
+                promptEdit(iconPrice, message -> {
+                    Double price = Util.parseDouble(message).orElse(null);
+                    if (price != null) {
+                        if (priceMin != null && price < priceMin) {
+                            Messages.price__min_limited.tm(player, Pair.of("%money%", priceMin));
+                        } else if (priceMax != null && price > priceMax) {
+                            Messages.price__max_limited.tm(player, Pair.of("%money%", priceMax));
                         } else {
-                            Messages.price__not_number.tm(player);
+                            data.setPrice(price);
+                            return true;
                         }
-                    }
-                    if (save) {
-                        plugin.getPlatform().runAtLocation(data.getLocation(), t -> {
-                            SignLinesFormatter formatter = SignLinesFormatter.inst();
-                            data.save(formatter.generateLockSignLines(data));
-                            plugin.getScheduler().runTask(() -> open());
-                        });
                     } else {
-                        plugin.getScheduler().runTask(() -> open());
+                        Messages.price__not_number.tm(player);
                     }
+                    return false;
+                });
+                return;
+            }
+            if (clickedId.equals('距')) {
+                promptEdit(iconReachEnter, message -> {
+                    Integer reach = Util.parseInt(message).orElse(null);
+                    if (reach != null) {
+                        if (reach < reachEnterMin) {
+                            Messages.reach__min_limited.tm(player, Pair.of("%reach%", reachEnterMin));
+                        } else if (reach > reachEnterMax) {
+                            Messages.reach__max_limited.tm(player, Pair.of("%reach%", reachEnterMax));
+                        } else {
+                            data.setReachEnter(reach);
+                            return true;
+                        }
+                    } else {
+                        Messages.reach__not_number.tm(player);
+                    }
+                    return false;
+                });
+                return;
+            }
+            if (clickedId.equals('离')) {
+                promptEdit(iconReachLeave, message -> {
+                    Integer reach = Util.parseInt(message).orElse(null);
+                    if (reach != null) {
+                        if (reach < reachLeaveMin) {
+                            Messages.reach__min_limited.tm(player, Pair.of("%reach%", reachLeaveMin));
+                        } else if (reach > reachLeaveMax) {
+                            Messages.reach__max_limited.tm(player, Pair.of("%reach%", reachLeaveMax));
+                        } else {
+                            data.setReachLeave(reach);
+                            return true;
+                        }
+                    } else {
+                        Messages.reach__not_number.tm(player);
+                    }
+                    return false;
                 });
                 return;
             }
@@ -228,6 +274,27 @@ public class GuiEditLock extends AbstractGuiModule {
             }
             // 其它图标点击
             handleOtherClick(click, slot);
+        }
+
+        private void promptEdit(PromptIcon icon, Function<String, Boolean> func) {
+            clicked = true;
+            player.closeInventory();
+            AdventureUtil.sendMessage(player, icon.promptTips);
+            Prompter.onChat(plugin, player, message -> {
+                boolean save = false;
+                if (!message.equals(icon.promptCancel)) {
+                    save = func.apply(message);
+                }
+                if (save) {
+                    plugin.getPlatform().runAtLocation(data.getLocation(), t -> {
+                        SignLinesFormatter formatter = SignLinesFormatter.inst();
+                        data.save(formatter.generateLockSignLines(data));
+                        plugin.getScheduler().runTask(() -> open());
+                    });
+                } else {
+                    plugin.getScheduler().runTask(() -> open());
+                }
+            });
         }
     }
 

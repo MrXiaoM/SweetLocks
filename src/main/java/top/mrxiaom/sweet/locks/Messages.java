@@ -78,6 +78,9 @@ public enum Messages implements IHolderAccessor {
     price__not_number("&7[&b收费门&7]&e 价格的格式不正确."),
     price__min_limited("&7[&b收费门&7]&e 超出了最小价格限制，最小 %money% 金币."),
     price__max_limited("&7[&b收费门&7]&e 超出了最大价格限制，最大 %money% 金币."),
+    reach__not_number("&7[&b收费门&7]&e 距离的格式不正确."),
+    reach__min_limited("&7[&b收费门&7]&e 超出了最小距离限制，最小 %reach% 格."),
+    reach__max_limited("&7[&b收费门&7]&e 超出了最大距离限制，最大 %reach% 格."),
 
     ;
     Messages(String defaultValue) {
