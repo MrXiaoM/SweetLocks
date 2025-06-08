@@ -153,7 +153,7 @@ public class InteractDoorListener extends AbstractModule implements Listener {
                 plugin.getPlatform().teleportAsync(player, target);
                 if (isEntering) {
                     Messages.door__have_entered.tm(player, replacements);
-                    plugin.getScheduler().runTaskAsync(() -> {
+                    if (!data.isOwner(player)) plugin.getScheduler().runTaskAsync(() -> {
                         String money = formatter.formatPrice(data); // TODO: 增加税收
                         OwnerNoticeManager.inst().notice(data.getOwner(), player, data.getSign().getBlock(), money);
                     });
