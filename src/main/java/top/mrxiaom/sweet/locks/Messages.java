@@ -51,6 +51,7 @@ public enum Messages implements IHolderAccessor {
     door__has_money("&7[&a收费门&7]&e 你的账户上有金币，不能进入这个收费门."),
     door__has_potions("&7[&a收费门&7]&e 你的身上有药水效果，不能进入这个收费门."),
     door__money_not_enough("&7[&a收费门&7]&e 你没有足够的金币进入这个收费门."),
+    door__solid_blocked("&7[&a收费门&7]&e 门外有方块阻挡，无法通过."),
 
     door__information("",
             "  &b&l收费门信息&r",

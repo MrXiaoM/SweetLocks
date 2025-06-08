@@ -123,8 +123,14 @@ public class InteractDoorListener extends AbstractModule implements Listener {
                         .getRelative(BlockFace.DOWN, 2);
             // 判定是否有实心方块堵门
             if (preventSolidTarget) {
-                if (isSolid(targetBlock))  return;
-                if (isSolid(targetBlock.getRelative(BlockFace.UP))) return;
+                if (isSolid(targetBlock)) {
+                    Messages.door__solid_blocked.tm(player);
+                    return;
+                }
+                if (isSolid(targetBlock.getRelative(BlockFace.UP))) {
+                    Messages.door__solid_blocked.tm(player);
+                    return;
+                }
             }
             if (!player.isSneaking()) {
                 (isEntering ? Messages.door__entering : Messages.door__leaving).tm(player, replacements);
