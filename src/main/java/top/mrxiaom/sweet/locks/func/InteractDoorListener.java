@@ -7,6 +7,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
+import org.bukkit.configuration.MemoryConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
@@ -31,17 +32,24 @@ import top.mrxiaom.sweet.locks.data.LockData;
 import top.mrxiaom.sweet.locks.func.entry.FlagDisplay;
 import top.mrxiaom.sweet.locks.gui.GuiEditLock;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @AutoRegister
 public class InteractDoorListener extends AbstractModule implements Listener {
     private final boolean supportBlockData = Util.isPresent("org.bukkit.block.data.BlockData");
-    private List<String> doors = Lists.newArrayList(
-            "IRON_DOOR", "IRON_DOOR_BLOCK"
-    );
+    private final List<String> doors = new ArrayList<>();
     public InteractDoorListener(SweetLocks plugin) {
         super(plugin);
         registerEvents();
+    }
+
+    @Override
+    public void reloadConfig(MemoryConfiguration config) {
+        doors.clear();
+        for (String s : config.getStringList("door-blocks")) {
+            doors.add(s.toUpperCase());
+        }
     }
 
     public boolean isDoorBlock(Block block) {

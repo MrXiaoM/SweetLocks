@@ -3,6 +3,11 @@ disable-worlds:
   - disableWorld1
   - disableWorld2
 
+# 铁门方块材质
+door-blocks:
+  - IRON_DOOR
+  - IRON_DOOR_BLOCK
+
 create:
   # 在第一行匹配时，创建收费门
   sign-line: '$lock'
