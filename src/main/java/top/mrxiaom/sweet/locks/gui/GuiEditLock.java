@@ -133,21 +133,21 @@ public class GuiEditLock extends AbstractGuiModule {
             });
         }
         if (id == '距') {
-            String range = String.valueOf(gui.getData().getReachEnter());
+            String reach = String.valueOf(gui.getData().getReachEnter());
             return iconReachEnter.generateIcon(player, oldLore -> {
                 List<String> lore = new ArrayList<>();
                 for (String line : oldLore) {
-                    lore.add(line.replace("%range%", range));
+                    lore.add(line.replace("%reach%", reach));
                 }
                 return lore;
             });
         }
         if (id == '离') {
-            String range = String.valueOf(gui.getData().getReachLeave());
+            String reach = String.valueOf(gui.getData().getReachLeave());
             return iconReachLeave.generateIcon(player, oldLore -> {
                 List<String> lore = new ArrayList<>();
                 for (String line : oldLore) {
-                    lore.add(line.replace("%range%", range));
+                    lore.add(line.replace("%reach%", reach));
                 }
                 return lore;
             });
