@@ -47,8 +47,26 @@ reach:
     min: 0
     max: 0
 
-# 如果目标传送位置是实心方块，不进行传送
-prevent-solid-target: true
+prevent-solid-target:
+  # 如果目标传送位置是实心方块，不进行传送
+  enable: true
+  # 碰撞箱高度大于等于多少的方块，属于实心方块
+  # 碰撞箱接口从 1.13 开始提供，低于此版本，该选项无效
+  min-height: 0.6
+  # 其它不属于实心方块的方块
+  # 但能被活塞推动后被破坏的，恒不属于实心方块
+  # 如果玩家无法传送到收费门对面，请添加方块到这里
+  not-solid-materials:
+    - STEP
+    - WOOD_STEP
+    - FENCE_GATE
+    - HOPPER
+    - SLIME
+    - SLIME_BLOCK
+    - WATER
+    - STATIONARY_WATER
+    - LAVA
+    - STATIONARY_LAVA
 
 # 标志显示内容
 flags:

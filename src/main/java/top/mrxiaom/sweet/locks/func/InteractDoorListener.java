@@ -2,10 +2,7 @@ package top.mrxiaom.sweet.locks.func;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
-import org.bukkit.block.BlockState;
-import org.bukkit.block.Sign;
+import org.bukkit.block.*;
 import org.bukkit.configuration.MemoryConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -39,8 +36,10 @@ import java.util.List;
 public class InteractDoorListener extends AbstractModule implements Listener {
     private final boolean supportBlockData = Util.isPresent("org.bukkit.block.data.BlockData");
     private final List<String> doors = new ArrayList<>();
+    private final List<String> notSolidMaterials = new ArrayList<>();
     private double taxPercent;
     private boolean preventSolidTarget;
+    private double solidMinHeight;
     public InteractDoorListener(SweetLocks plugin) {
         super(plugin);
         registerEvents();
@@ -49,8 +48,12 @@ public class InteractDoorListener extends AbstractModule implements Listener {
     @Override
     public void reloadConfig(MemoryConfiguration config) {
         doors.clear();
+        notSolidMaterials.clear();
         for (String s : config.getStringList("door-blocks")) {
             doors.add(s.toUpperCase());
+        }
+        for (String s : config.getStringList("prevent-solid-target.not-solid-materials")) {
+            notSolidMaterials.add(s.toUpperCase());
         }
         String taxString = config.getString("money.tax", "0%");
         if (taxString.endsWith("%")) {
@@ -59,7 +62,23 @@ public class InteractDoorListener extends AbstractModule implements Listener {
         } else {
             taxPercent = Util.parseDouble(taxString).orElse(0.0);
         }
-        preventSolidTarget = config.getBoolean("prevent-solid-target", true);
+        preventSolidTarget = config.getBoolean("prevent-solid-target.enable", true);
+        solidMinHeight = config.getDouble("prevent-solid-target.min-height", 0.6);
+    }
+
+    public boolean isSolid(Block block) {
+        if (block.getPistonMoveReaction().equals(PistonMoveReaction.BREAK)) {
+            return false;
+        }
+        if (notSolidMaterials.contains(block.getType().name().toUpperCase())) {
+            return false;
+        }
+        try {
+            if (block.getBoundingBox().getHeight() < solidMinHeight) {
+                return false;
+            }
+        } catch (Throwable ignored) {}
+        return true;
     }
 
     public boolean isDoorBlock(Block block) {
@@ -104,8 +123,8 @@ public class InteractDoorListener extends AbstractModule implements Listener {
                         .getRelative(BlockFace.DOWN, 2);
             // 判定是否有实心方块堵门
             if (preventSolidTarget) {
-                if (targetBlock.getType().isSolid()) return;
-                if (targetBlock.getRelative(BlockFace.UP).getType().isSolid()) return;
+                if (isSolid(targetBlock))  return;
+                if (isSolid(targetBlock.getRelative(BlockFace.UP))) return;
             }
             if (!player.isSneaking()) {
                 (isEntering ? Messages.door__entering : Messages.door__leaving).tm(player, replacements);
