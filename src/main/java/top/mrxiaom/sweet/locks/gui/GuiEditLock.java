@@ -24,6 +24,7 @@ import top.mrxiaom.sweet.locks.data.LockData;
 import top.mrxiaom.sweet.locks.func.AbstractGuiModule;
 import top.mrxiaom.sweet.locks.func.SignLinesFormatter;
 import top.mrxiaom.sweet.locks.gui.edit.FlagIcon;
+import top.mrxiaom.sweet.locks.gui.edit.PromptIcon;
 import top.mrxiaom.sweet.locks.utils.Prompter;
 
 import java.io.File;
@@ -36,9 +37,7 @@ import java.util.Map;
 public class GuiEditLock extends AbstractGuiModule {
     private final Map<String, String> presetFlagMap = new HashMap<>();
     private final Map<Character, FlagIcon> flagIcons = new HashMap<>();
-    private LoadedIcon iconPrice;
-    private String iconPricePromptTips;
-    private String iconPricePromptCancel;
+    private PromptIcon iconPrice;
     private Double priceMin;
     private Double priceMax;
     public GuiEditLock(SweetLocks plugin) {
@@ -78,9 +77,9 @@ public class GuiEditLock extends AbstractGuiModule {
     protected void loadMainIcon(ConfigurationSection section, String id, LoadedIcon icon) {
         if (id.length() != 1) return;
         if (id.equals("价")) {
-            iconPrice = icon;
-            iconPricePromptTips = section.getString(id = ".prompt.tips", "&7[&b收费门&7]&f 请在聊天栏发送&e收费门进入价格&7 (发送&f cancel &7取消设置)");
-            iconPricePromptCancel = section.getString(id = ".prompt.cancel", "cancel");
+            String promptTips = section.getString(id = ".prompt.tips", "&7[&b收费门&7]&f 请在聊天栏发送&e收费门进入价格&7 (发送&f cancel &7取消设置)");
+            String promptCancel = section.getString(id = ".prompt.cancel", "cancel");
+            iconPrice = new PromptIcon(icon, promptTips, promptCancel);
             return;
         }
         String flag = presetFlagMap.get(id);
@@ -98,7 +97,7 @@ public class GuiEditLock extends AbstractGuiModule {
         SignLinesFormatter formatter = SignLinesFormatter.inst();
         if (id == '价') {
             String price = formatter.formatPrice(gui.getData());
-            return iconPrice.generateIcon(player, null, oldLore -> {
+            return iconPrice.icon.generateIcon(player, null, oldLore -> {
                 List<String> lore = new ArrayList<>();
                 for (String line : oldLore) {
                     lore.add(line.replace("%price%", price));
@@ -180,10 +179,10 @@ public class GuiEditLock extends AbstractGuiModule {
                 // 设置收费门价格
                 clicked = true;
                 player.closeInventory();
-                AdventureUtil.sendMessage(player, iconPricePromptTips);
+                AdventureUtil.sendMessage(player, iconPrice.promptTips);
                 Prompter.onChat(plugin, player, message -> {
                     boolean save = false;
-                    if (!message.equals(iconPricePromptCancel)) {
+                    if (!message.equals(iconPrice.promptCancel)) {
                         Double price = Util.parseDouble(message).orElse(null);
                         if (price != null) {
                             if (priceMin != null && price < priceMin) {
