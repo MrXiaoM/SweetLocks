@@ -142,7 +142,12 @@ public class InteractDoorListener extends AbstractModule implements Listener {
             }
             // 非创建者进门收费
             double price = data.getPrice(); // 价格 - 扣除玩家的金币
-            double tax = price * taxPercent; // 税收
+            double tax; // 税收
+            if (player.hasPermission("sweet.locks.bypass.tax")) {
+                tax = 0.0;
+            } else {
+                tax = price * taxPercent;
+            }
             double money = Math.max(0, price - tax); // 最终金钱 - 给创建者的金币
             if (isEntering && price > 0 && !data.isOwner(player)) {
                 IEconomy economy = plugin.getEconomy();
