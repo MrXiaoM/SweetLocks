@@ -15,6 +15,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 import top.mrxiaom.pluginbase.economy.IEconomy;
@@ -56,6 +57,14 @@ public class InteractDoorListener extends AbstractModule implements Listener {
         return doors.contains(block.getType().name().toUpperCase());
     }
 
+    private boolean isOffHand(PlayerInteractEvent e) {
+        try {
+            return e.getHand().equals(EquipmentSlot.OFF_HAND);
+        } catch (Throwable t) {
+            return false;
+        }
+    }
+
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onInteract(PlayerInteractEvent e) {
         if (e.useInteractedBlock().equals(Event.Result.DENY)) return;
@@ -73,6 +82,7 @@ public class InteractDoorListener extends AbstractModule implements Listener {
             LockData data = findSign(baseBlock, clickFace);
             if (data == null) return;
             e.setCancelled(true);
+            if (isOffHand(e)) return;
             BlockFace signFace = SignEditor.getWallSignFacing(data.getSign());
             // 是否正在进入收费门
             boolean isEntering = signFace.equals(clickFace);
@@ -152,6 +162,7 @@ public class InteractDoorListener extends AbstractModule implements Listener {
             LockData data = SignEditor.get((Sign) state);
             if (data == null) return;
             e.setCancelled(true);
+            if (isOffHand(e)) return;
             if (player.isSneaking() && (data.isOwner(player) || player.isOp())) {
                 if (GuiManager.inst().getOpeningGui(player) == null) {
                     plugin.getScheduler().runTask(() -> {
