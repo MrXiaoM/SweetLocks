@@ -40,6 +40,7 @@ import java.util.List;
 public class InteractDoorListener extends AbstractModule implements Listener {
     private final boolean supportBlockData = Util.isPresent("org.bukkit.block.data.BlockData");
     private final List<String> doors = new ArrayList<>();
+    private double taxPercent;
     public InteractDoorListener(SweetLocks plugin) {
         super(plugin);
         registerEvents();
@@ -50,6 +51,13 @@ public class InteractDoorListener extends AbstractModule implements Listener {
         doors.clear();
         for (String s : config.getStringList("door-blocks")) {
             doors.add(s.toUpperCase());
+        }
+        String taxString = config.getString("money.tax", "0%");
+        if (taxString.endsWith("%")) {
+            double v = Util.parseDouble(taxString.replace("%", "")).orElse(0.0);
+            taxPercent = v / 100.0;
+        } else {
+            taxPercent = Util.parseDouble(taxString).orElse(0.0);
         }
     }
 
@@ -133,12 +141,14 @@ public class InteractDoorListener extends AbstractModule implements Listener {
                 }
             }
             // 非创建者进门收费
-            double price = data.getPrice();
+            double price = data.getPrice(); // 价格 - 扣除玩家的金币
+            double tax = price * taxPercent; // 税收
+            double money = Math.max(0, price - tax); // 最终金钱 - 给创建者的金币
             if (isEntering && price > 0 && !data.isOwner(player)) {
                 IEconomy economy = plugin.getEconomy();
                 if (economy.has(player, price)) {
                     economy.takeMoney(player, price);
-                    economy.giveMoney(data.getOwner(), price); // TODO: 增加税收
+                    economy.giveMoney(data.getOwner(), money);
                 } else {
                     Messages.door__money_not_enough.tm(player);
                     return;
@@ -155,8 +165,9 @@ public class InteractDoorListener extends AbstractModule implements Listener {
                 if (isEntering) {
                     Messages.door__have_entered.tm(player, replacements);
                     if (!data.isOwner(player)) plugin.getScheduler().runTaskAsync(() -> {
-                        String money = formatter.formatPrice(data); // TODO: 增加税收
-                        OwnerNoticeManager.inst().notice(data.getOwner(), player, data.getSign().getBlock(), money);
+                        String moneyStr = formatter.formatMoney(money);
+                        String taxStr = tax > 0 ? formatter.formatMoney(tax) : null;
+                        OwnerNoticeManager.inst().notice(data.getOwner(), player, data.getSign().getBlock(), moneyStr, taxStr);
                     });
                 } else {
                     Messages.door__have_left.tm(player, replacements);

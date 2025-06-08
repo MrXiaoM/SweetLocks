@@ -11,6 +11,8 @@ door-blocks:
 create:
   # 在第一行匹配时，创建收费门
   sign-line: '$lock'
+  # 创建收费门需要多少金币
+  create-price: 0
   # 默认价格
   default-price: 0
 
@@ -30,6 +32,8 @@ money:
   # 如果价格是整数，去除小数部分
   # 注释该选项关闭这个功能
   replace-empty: '.0'
+  # 玩家进入收费门时，向创建者收取百分之多少的税收
+  tax: '0%'
 
 # 标志显示内容
 flags:

@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.jetbrains.annotations.Nullable;
 import top.mrxiaom.pluginbase.func.AutoRegister;
 import top.mrxiaom.pluginbase.utils.ListPair;
 import top.mrxiaom.pluginbase.utils.Util;
@@ -26,18 +27,21 @@ public class OwnerNoticeManager extends AbstractModule implements Listener {
         private final String world;
         private final int x, y, z;
         private final String money;
+        @Nullable
+        private final String tax;
 
-        private Notice(String playerName, String world, int x, int y, int z, String money) {
+        private Notice(String playerName, String world, int x, int y, int z, String money, @Nullable String tax) {
             this.playerName = playerName;
             this.world = world;
             this.x = x;
             this.y = y;
             this.z = z;
             this.money = money;
+            this.tax = tax;
         }
 
         private void notice(Player owner) {
-            OwnerNoticeManager.this.notice(owner, playerName, world, x, y, z, money);
+            OwnerNoticeManager.this.notice(owner, playerName, world, x, y, z, money, tax);
         }
     }
     private final File file;
@@ -81,8 +85,9 @@ public class OwnerNoticeManager extends AbstractModule implements Listener {
                 int y = entry.getInt("y");
                 int z = entry.getInt("z");
                 String money = entry.getString("money");
+                String tax = entry.getString("tax", null);
                 if (playerName != null && world != null && money != null) {
-                    notices.add(new Notice(playerName, world, x, y, z, money));
+                    notices.add(new Notice(playerName, world, x, y, z, money, tax));
                 }
             }
         }
@@ -103,6 +108,9 @@ public class OwnerNoticeManager extends AbstractModule implements Listener {
                 section.set("y", notice.y);
                 section.set("z", notice.z);
                 section.set("money", notice.money);
+                if (notice.tax != null) {
+                    section.set("tax", notice.tax);
+                }
                 sections.add(section);
             }
             config.set("notice." + uuid, sections);
@@ -114,22 +122,22 @@ public class OwnerNoticeManager extends AbstractModule implements Listener {
         }
     }
 
-    public void notice(OfflinePlayer owner, Player player, Block block, String money) {
+    public void notice(OfflinePlayer owner, Player player, Block block, String money, @Nullable String tax) {
         String world = block.getWorld().getName();
         int x = block.getX();
         int y = block.getY();
         int z = block.getZ();
         Player p = owner.isOnline() ? owner.getPlayer() : null;
         if (p != null) {
-            notice(p, player.getName(), world, x, y, z, money);
+            notice(p, player.getName(), world, x, y, z, money, tax);
         } else {
             List<Notice> list = Util.getOrPut(noticeMap, owner.getUniqueId(), () -> new ArrayList<>());
-            list.add(new Notice(player.getName(), world, x, y, z, money));
+            list.add(new Notice(player.getName(), world, x, y, z, money, tax));
             save();
         }
     }
 
-    public void notice(Player owner, String player, String world, int x, int y, int z, String money) {
+    public void notice(Player owner, String player, String world, int x, int y, int z, String money, @Nullable String tax) {
         ListPair<String, Object> replacements = new ListPair<>();
         replacements.add("%player%", player);
         replacements.add("%world%", world);
@@ -137,7 +145,12 @@ public class OwnerNoticeManager extends AbstractModule implements Listener {
         replacements.add("%y%", y);
         replacements.add("%z%", z);
         replacements.add("%money%", money);
-        Messages.door__owner_notice.tm(owner, replacements);
+        if (tax != null) {
+            replacements.add("%tax%", tax);
+            Messages.door__owner_notice.tm(owner, replacements);
+        } else {
+            Messages.door__owner_notice_no_tax.tm(owner, replacements);
+        }
     }
 
     public static OwnerNoticeManager inst() {

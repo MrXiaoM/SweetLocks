@@ -55,10 +55,15 @@ public class SignLinesFormatter extends AbstractModule {
 
     @NotNull
     public String formatPrice(@NotNull LockData data) {
-        String price = String.format(moneyFormat, data.getPrice());
+        return formatMoney(data.getPrice());
+    }
+
+    @NotNull
+    public String formatMoney(double money) {
+        String str = String.format(moneyFormat, money);
         return moneyReplaceEmpty != null
-                ? price.replace(moneyReplaceEmpty, "")
-                : price;
+                ? str.replace(moneyReplaceEmpty, "")
+                : str;
     }
 
     @NotNull
