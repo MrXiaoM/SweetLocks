@@ -61,7 +61,7 @@ main-icons:
     with: '&a是'
     none: '&c否'
   出:
-    material: BIRCH_DOOR
+    material: WOODEN_DOOR
     display: '&e&l允许离开'
     lore:
       - ''

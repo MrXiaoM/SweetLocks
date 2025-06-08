@@ -1,5 +1,8 @@
 package top.mrxiaom.sweet.locks.gui;
 
+import de.tr7zw.changeme.nbtapi.NBT;
+import de.tr7zw.changeme.nbtapi.utils.MinecraftVersion;
+import org.bukkit.Material;
 import org.bukkit.block.Sign;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.MemoryConfiguration;
@@ -14,7 +17,9 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import top.mrxiaom.pluginbase.func.AutoRegister;
+import top.mrxiaom.pluginbase.func.gui.IModifier;
 import top.mrxiaom.pluginbase.func.gui.LoadedIcon;
 import top.mrxiaom.pluginbase.gui.IGui;
 import top.mrxiaom.pluginbase.utils.*;
@@ -119,7 +124,7 @@ public class GuiEditLock extends AbstractGuiModule {
         SignLinesFormatter formatter = SignLinesFormatter.inst();
         if (id == '价') {
             String price = formatter.formatPrice(gui.getData());
-            return iconPrice.icon.generateIcon(player, null, oldLore -> {
+            return iconPrice.generateIcon(player, oldLore -> {
                 List<String> lore = new ArrayList<>();
                 for (String line : oldLore) {
                     lore.add(line.replace("%price%", price));
@@ -129,7 +134,7 @@ public class GuiEditLock extends AbstractGuiModule {
         }
         if (id == '距') {
             String range = String.valueOf(gui.getData().getReachEnter());
-            return iconReachEnter.icon.generateIcon(player, null, oldLore -> {
+            return iconReachEnter.generateIcon(player, oldLore -> {
                 List<String> lore = new ArrayList<>();
                 for (String line : oldLore) {
                     lore.add(line.replace("%range%", range));
@@ -139,7 +144,7 @@ public class GuiEditLock extends AbstractGuiModule {
         }
         if (id == '离') {
             String range = String.valueOf(gui.getData().getReachLeave());
-            return iconReachLeave.icon.generateIcon(player, null, oldLore -> {
+            return iconReachLeave.generateIcon(player, oldLore -> {
                 List<String> lore = new ArrayList<>();
                 for (String line : oldLore) {
                     lore.add(line.replace("%range%", range));
@@ -152,7 +157,7 @@ public class GuiEditLock extends AbstractGuiModule {
             String flag = gui.getData().hasFlag(flagIcon.flag)
                     ? flagIcon.with
                     : flagIcon.none;
-            return flagIcon.icon.generateIcon(player, null, oldLore -> {
+            return flagIcon.generateIcon(player, oldLore -> {
                 List<String> lore = new ArrayList<>();
                 for (String line : oldLore) {
                     lore.add(line.replace("%flag%", flag));
@@ -316,6 +321,22 @@ public class GuiEditLock extends AbstractGuiModule {
                 }
             });
         }
+    }
+
+    public static ItemStack generateIcon(LoadedIcon icon, Player player, @Nullable IModifier<List<String>> loreModifier) {
+        if (icon.material.equals("AIR") || icon.amount == 0) return new ItemStack(Material.AIR);
+        Pair<Material, Integer> pair = ItemStackUtil.parseMaterial(icon.material);
+        ItemStack item = pair == null ? new ItemStack(Material.PAPER) : ItemStackUtil.legacy(pair);
+        if (!MinecraftVersion.isAtLeastVersion(MinecraftVersion.MC1_20_R4)) {
+            try {
+                NBT.modify(item, nbt -> {
+                    nbt.getOrCreateCompound("display");
+                });
+            } catch (Throwable t) {
+                item = new ItemStack(Material.PAPER);
+            }
+        }
+        return icon.generateIcon(item, player, null, loreModifier);
     }
 
     public static GuiEditLock inst() {

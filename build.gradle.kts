@@ -33,7 +33,7 @@ dependencies {
     implementation("de.tr7zw:item-nbt-api:2.15.0")
     implementation("com.github.technicallycoded:FoliaLib:0.4.4")
     implementation("org.jetbrains:annotations:24.0.0")
-    implementation("top.mrxiaom:PluginBase:1.4.6")
+    implementation("top.mrxiaom:PluginBase:1.4.7")
     for (nms in project.project(":nms").also {
         implementation(it)
     }.subprojects) {
