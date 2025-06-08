@@ -54,7 +54,7 @@ public enum Messages implements IHolderAccessor {
     door__information("",
             "  &b&l收费门信息&r",
             "  &f创建者: &e%player%",
-            "  &f价格: &e%price%",
+            "  &f价格: &e%price%金币",
             "  &f标志:",
             "flags",
             ""
@@ -62,7 +62,7 @@ public enum Messages implements IHolderAccessor {
     door__information_owner("",
             "  &b&l收费门信息&r",
             "  &f创建者: &e%player%",
-            "  &f价格: &e%price%",
+            "  &f价格: &e%price%金币",
             "  &f标志:",
             "flags",
             "  &bShift+右键 &f点击告示牌编辑",
