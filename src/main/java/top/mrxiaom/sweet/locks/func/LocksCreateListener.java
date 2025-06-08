@@ -26,6 +26,8 @@ public class LocksCreateListener extends AbstractModule implements Listener {
     private String createSignLine;
     private double createLocksPrice;
     private double createDefaultPrice;
+    private int createDefaultReachEnter;
+    private int createDefaultReachLeave;
     public LocksCreateListener(SweetLocks plugin) {
         super(plugin);
         registerEvents();
@@ -36,6 +38,8 @@ public class LocksCreateListener extends AbstractModule implements Listener {
         this.createSignLine = config.getString("create.sign-line", "$lock");
         this.createLocksPrice = config.getDouble("create.create-price", 0.0);
         this.createDefaultPrice = config.getDouble("create.default-price", 0.0);
+        this.createDefaultReachEnter = config.getInt("create.default-reach-enter", 0);
+        this.createDefaultReachLeave = config.getInt("create.default-reach-leave", 0);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
@@ -74,7 +78,7 @@ public class LocksCreateListener extends AbstractModule implements Listener {
             }
             plugin.getPlatform().runAtLocationLater(sign.getLocation(), t -> {
                 SignLinesFormatter formatter = SignLinesFormatter.inst();
-                LockData data = new LockData(sign, player, createDefaultPrice);
+                LockData data = new LockData(sign, player, createDefaultPrice, createDefaultReachEnter, createDefaultReachLeave);
                 data.addFlags("can-enter", "can-leave");
                 data.save(formatter.generateLockSignLines(data));
                 Messages.create__success.tm(player);

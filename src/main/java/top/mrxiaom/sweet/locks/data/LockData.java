@@ -32,6 +32,12 @@ public class LockData {
     @SerializedName("price")
     private double price;
     @Expose
+    @SerializedName("reach-enter")
+    private int reachEnter;
+    @Expose
+    @SerializedName("reach-leave")
+    private int reachLeave;
+    @Expose
     @SerializedName("flags")
     private List<String> flags;
 
@@ -39,12 +45,16 @@ public class LockData {
     public LockData(
             @NotNull Sign sign,
             @NotNull OfflinePlayer owner,
-            double price
+            double price,
+            int reachEnter,
+            int reachLeave
     ) {
         this.sign = sign;
         this.owner = owner;
         this.ownerUUID = owner.getUniqueId().toString();
         this.price = price;
+        this.reachEnter = reachEnter;
+        this.reachLeave = reachLeave;
         this.flags = new ArrayList<>();
     }
 
@@ -82,6 +92,22 @@ public class LockData {
 
     public void setPrice(double price) {
         this.price = price;
+    }
+
+    public int getReachEnter() {
+        return reachEnter;
+    }
+
+    public void setReachEnter(int reachEnter) {
+        this.reachEnter = reachEnter;
+    }
+
+    public int getReachLeave() {
+        return reachLeave;
+    }
+
+    public void setReachLeave(int reachLeave) {
+        this.reachLeave = reachLeave;
     }
 
     @NotNull

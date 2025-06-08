@@ -114,15 +114,16 @@ public class InteractDoorListener extends AbstractModule implements Listener {
             ListPair<String, Object> replacements = new ListPair<>();
             replacements.add("%player%", formatter.formatOwner(data));
             replacements.add("%price%", formatter.formatPrice(data));
-            Block targetBlock = baseBlock.getRelative(clickFace.getOppositeFace())
-                    .getRelative(BlockFace.DOWN, 2);
+            // 是否正在进入收费门
+            boolean isEntering = signFace.equals(clickFace);
+            int reach = isEntering ? data.getReachEnter() : data.getReachLeave();
+            Block targetBlock = baseBlock.getRelative(clickFace.getOppositeFace(), Math.max(1, 1 + reach))
+                        .getRelative(BlockFace.DOWN, 2);
             // 判定是否有实心方块堵门
             if (preventSolidTarget) {
                 if (targetBlock.getType().isSolid()) return;
                 if (targetBlock.getRelative(BlockFace.UP).getType().isSolid()) return;
             }
-            // 是否正在进入收费门
-            boolean isEntering = signFace.equals(clickFace);
             if (!player.isSneaking()) {
                 (isEntering ? Messages.door__entering : Messages.door__leaving).tm(player, replacements);
                 return;

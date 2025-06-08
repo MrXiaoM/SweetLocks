@@ -15,6 +15,9 @@ create:
   create-price: 0
   # 默认价格
   default-price: 0
+  # 默认传送到门外多远的距离
+  default-reach-enter: 0
+  default-reach-leave: 0
 
 # 收费铁门牌子内容，支持 MiniMessage
 lock-sign:
