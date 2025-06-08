@@ -243,7 +243,7 @@ public class InteractDoorListener extends AbstractModule implements Listener {
                 // TODO: 待验证 (0, 0) 应该 +0.5 还是 -0.5
                 x > 0 ? (x + 0.5) : (x - 0.5),
                 y,
-                z > 0 ? (x + 0.5) : (x - 0.5)
+                z > 0 ? (z + 0.5) : (z - 0.5)
         );
     }
 
