@@ -70,6 +70,7 @@ public enum Messages implements IHolderAccessor {
     ),
     door__flag("  &8● &f%flag%"),
     door__have_entered("&7[&a收费门&7]&f 你花费&e %price%金币&f 进入了&e %player% &f的收费门."),
+    door__have_entered_owner("&7[&a收费门&7]&f 你进入了&e %player% &f的收费门."),
     door__have_left("&7[&a收费门&7]&f 你离开了&e %player% &f的收费门."),
     door__owner_notice("&7[&b收费门&7] &f玩家&e %player% &f进入了你的收费门 &7(%world%, %x%, %y%, %z%)&f，你因此获得&e %money%金币 &7(税收 %tax%金币)&f."),
     door__owner_notice_no_tax("&7[&b收费门&7] &f玩家&e %player% &f进入了你的收费门 &7(%world%, %x%, %y%, %z%)&f，你因此获得&e %money%金币&f."),

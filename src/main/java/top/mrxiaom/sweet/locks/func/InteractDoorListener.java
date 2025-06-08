@@ -168,7 +168,11 @@ public class InteractDoorListener extends AbstractModule implements Listener {
                 target.setDirection(player.getLocation().getDirection());
                 plugin.getPlatform().teleportAsync(player, target);
                 if (isEntering) {
-                    Messages.door__have_entered.tm(player, replacements);
+                    if (data.isOwner(player)) {
+                        Messages.door__have_entered_owner.tm(player, replacements);
+                    } else {
+                        Messages.door__have_entered.tm(player, replacements);
+                    }
                     if (!data.isOwner(player)) plugin.getScheduler().runTaskAsync(() -> {
                         String moneyStr = formatter.formatMoney(money);
                         String taxStr = tax > 0 ? formatter.formatMoney(tax) : null;
