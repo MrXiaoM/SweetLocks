@@ -94,10 +94,6 @@ public class InteractDoorListener extends AbstractModule implements Listener {
                 (isEntering ? Messages.door__entering : Messages.door__leaving).tm(player, replacements);
                 return;
             }
-            // 传送目标
-            Location target = toCenterLocation(baseBlock
-                    .getRelative(clickFace.getOppositeFace())
-                    .getRelative(0, 2, 0));
             // 判定处理 flags
             if (isEntering) { // 进入时
                 if(!data.hasFlag("can-enter")) { // 进
@@ -150,6 +146,11 @@ public class InteractDoorListener extends AbstractModule implements Listener {
             }
             // 进出收费门
             plugin.getPlatform().runAtEntity(player, t -> {
+                Block targetBlock = baseBlock.getRelative(clickFace.getOppositeFace())
+                        .getRelative(BlockFace.DOWN, 2);
+                // 传送目标
+                Location target = toCenterLocation(targetBlock);
+                target.setDirection(player.getLocation().getDirection());
                 plugin.getPlatform().teleportAsync(player, target);
                 if (isEntering) {
                     Messages.door__have_entered.tm(player, replacements);
@@ -240,10 +241,9 @@ public class InteractDoorListener extends AbstractModule implements Listener {
         int y = block.getY();
         int z = block.getZ();
         return new Location(block.getWorld(),
-                // TODO: 待验证 (0, 0) 应该 +0.5 还是 -0.5
-                x > 0 ? (x + 0.5) : (x - 0.5),
+                x > 0 ? (x - 0.5) : (x + 0.5),
                 y,
-                z > 0 ? (z + 0.5) : (z - 0.5)
+                z > 0 ? (z - 0.5) : (z + 0.5)
         );
     }
 
