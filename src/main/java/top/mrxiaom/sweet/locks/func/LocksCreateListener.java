@@ -61,6 +61,10 @@ public class LocksCreateListener extends AbstractModule implements Listener {
                 Messages.create__need_door.tm(player);
                 return;
             }
+            if (!player.hasPermission("sweet.locks.create")) {
+                Messages.no_permission.tm(player);
+                return;
+            }
             if (createLocksPrice > 0) {
                 IEconomy economy = plugin.getEconomy();
                 if (!economy.has(player, createLocksPrice)) {

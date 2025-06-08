@@ -9,6 +9,7 @@ import java.util.List;
 import static top.mrxiaom.pluginbase.func.language.LanguageEnumAutoHolder.wrap;
 
 public enum Messages implements IHolderAccessor {
+    no_permission("&c你没有进行此操作的权限."),
     commands__reload("&7[&b收费门&7]&a 配置文件已重载."),
     commands__help__player("",
             "&e&lSweetLocks &b&l收费门帮助&r",
