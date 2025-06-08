@@ -212,7 +212,7 @@ public class GuiEditLock extends AbstractGuiModule {
                 plugin.getPlatform().runAtLocation(data.getLocation(), t -> {
                     SignLinesFormatter formatter = SignLinesFormatter.inst();
                     data.save(formatter.generateLockSignLines(data));
-                    plugin.getScheduler().runTask(() -> open());
+                    plugin.getScheduler().runTask(() -> updateInventory(inventory));
                 });
                 return;
             }
