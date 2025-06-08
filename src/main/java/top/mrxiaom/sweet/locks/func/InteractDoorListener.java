@@ -1,6 +1,9 @@
 package top.mrxiaom.sweet.locks.func;
 
 import com.google.common.collect.Lists;
+import de.tr7zw.changeme.nbtapi.NBT;
+import net.kyori.adventure.platform.bukkit.BukkitComponentSerializer;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -41,6 +44,7 @@ public class InteractDoorListener extends AbstractModule implements Listener {
     private final boolean supportBlockData = Util.isPresent("org.bukkit.block.data.BlockData");
     private final List<String> doors = new ArrayList<>();
     private double taxPercent;
+    private boolean preventSolidTarget;
     public InteractDoorListener(SweetLocks plugin) {
         super(plugin);
         registerEvents();
@@ -59,6 +63,7 @@ public class InteractDoorListener extends AbstractModule implements Listener {
         } else {
             taxPercent = Util.parseDouble(taxString).orElse(0.0);
         }
+        preventSolidTarget = config.getBoolean("prevent-solid-target", true);
     }
 
     public boolean isDoorBlock(Block block) {
@@ -79,6 +84,19 @@ public class InteractDoorListener extends AbstractModule implements Listener {
         Player player = e.getPlayer();
         Block block = e.getClickedBlock();
         BlockFace clickFace = e.getBlockFace();
+        if (block != null && e.getAction().equals(Action.LEFT_CLICK_BLOCK) && !isOffHand(e)) {
+            t(player, "方块 " + block.getType() + " (" + block.getX() + ", " + block.getY() + ", " + block.getZ() + ")");
+            NBT.get(block.getState(), nbt -> {
+                if (nbt.hasTag("Text1")) {
+                    Component component = BukkitComponentSerializer.gson().deserializeOrNull(nbt.getString("Text1"));
+                    String insertion = component == null ? null : component.style().insertion();
+                    if (insertion != null) {
+                        t(player, "insertion: " + insertion);
+                    }
+                }
+                t(player, nbt.toString());
+            });
+        }
         if (block == null || !e.getAction().equals(Action.RIGHT_CLICK_BLOCK)) return;
         if (plugin.isInDisabledWorld(block)) return;
 
@@ -96,6 +114,13 @@ public class InteractDoorListener extends AbstractModule implements Listener {
             ListPair<String, Object> replacements = new ListPair<>();
             replacements.add("%player%", formatter.formatOwner(data));
             replacements.add("%price%", formatter.formatPrice(data));
+            Block targetBlock = baseBlock.getRelative(clickFace.getOppositeFace())
+                    .getRelative(BlockFace.DOWN, 2);
+            // 判定是否有实心方块堵门
+            if (preventSolidTarget) {
+                if (targetBlock.getType().isSolid()) return;
+                if (targetBlock.getRelative(BlockFace.UP).getType().isSolid()) return;
+            }
             // 是否正在进入收费门
             boolean isEntering = signFace.equals(clickFace);
             if (!player.isSneaking()) {
@@ -161,8 +186,6 @@ public class InteractDoorListener extends AbstractModule implements Listener {
             }
             // 进出收费门
             plugin.getPlatform().runAtEntity(player, t -> {
-                Block targetBlock = baseBlock.getRelative(clickFace.getOppositeFace())
-                        .getRelative(BlockFace.DOWN, 2);
                 // 传送目标
                 Location target = toCenterLocation(targetBlock);
                 target.setDirection(player.getLocation().getDirection());
