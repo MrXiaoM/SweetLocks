@@ -16,6 +16,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import top.mrxiaom.pluginbase.func.AutoRegister;
 import top.mrxiaom.pluginbase.func.gui.LoadedIcon;
+import top.mrxiaom.pluginbase.gui.IGui;
 import top.mrxiaom.pluginbase.utils.*;
 import top.mrxiaom.sweet.locks.Messages;
 import top.mrxiaom.sweet.locks.SweetLocks;
@@ -26,7 +27,9 @@ import top.mrxiaom.sweet.locks.gui.edit.FlagIcon;
 import top.mrxiaom.sweet.locks.utils.Prompter;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @AutoRegister
@@ -87,6 +90,36 @@ public class GuiEditLock extends AbstractGuiModule {
             String none = section.getString(id + ".none", "&c否");
             flagIcons.put(iconId, new FlagIcon(iconId, icon, flag, with, none));
         }
+    }
+
+    @Override
+    protected ItemStack applyMainIcon(IGui instance, Player player, char id, int index, int appearTimes) {
+        Impl gui = (Impl) instance;
+        SignLinesFormatter formatter = SignLinesFormatter.inst();
+        if (id == '价') {
+            String price = formatter.formatPrice(gui.getData());
+            return iconPrice.generateIcon(player, null, oldLore -> {
+                List<String> lore = new ArrayList<>();
+                for (String line : oldLore) {
+                    lore.add(line.replace("%price%", price));
+                }
+                return lore;
+            });
+        }
+        FlagIcon flagIcon = flagIcons.get(id);
+        if (flagIcon != null) {
+            String flag = gui.getData().hasFlag(flagIcon.flag)
+                    ? flagIcon.with
+                    : flagIcon.none;
+            return flagIcon.icon.generateIcon(player, null, oldLore -> {
+                List<String> lore = new ArrayList<>();
+                for (String line : oldLore) {
+                    lore.add(line.replace("%flag%", flag));
+                }
+                return lore;
+            });
+        }
+        return null;
     }
 
     public Impl create(Player player, LockData data) {
