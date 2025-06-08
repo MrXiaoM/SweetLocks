@@ -108,6 +108,7 @@ public class SignEditor {
             });
         }
         NBT.modify(sign, nbt -> {
+            nbt.setBoolean("is_waxed", content != null);
             // 1.20.x 双面告示牌支持
             if (supportSignSide) {
                 ReadWriteNBT frontText = nbt.getOrCreateCompound("front_text");

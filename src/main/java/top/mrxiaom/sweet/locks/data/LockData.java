@@ -112,16 +112,8 @@ public class LockData {
 
     public void save(@NotNull List<String> signLines) {
         SignEditor.set(sign, this, signLines);
+        sign = (Sign) sign.getBlock().getState();
         sign.update();
-    }
-
-    public void remove(@NotNull List<String> signLines) {
-        SignEditor.set(sign, null, signLines);
-        sign.update();
-    }
-
-    public void remove() {
-        remove(Lists.newArrayList("", "", "", ""));
     }
 
     @Nullable

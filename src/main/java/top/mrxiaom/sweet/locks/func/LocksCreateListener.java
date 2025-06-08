@@ -57,8 +57,7 @@ public class LocksCreateListener extends AbstractModule implements Listener {
                 Messages.create__need_door.tm(player);
                 return;
             }
-            e.setCancelled(true);
-            plugin.getPlatform().runAtLocation(sign.getLocation(), t -> {
+            plugin.getPlatform().runAtLocationLater(sign.getLocation(), t -> {
                 SignLinesFormatter formatter = SignLinesFormatter.inst();
                 LockData data = new LockData(sign, player, createDefaultPrice);
                 data.addFlags("can-enter", "can-leave");
@@ -67,7 +66,7 @@ public class LocksCreateListener extends AbstractModule implements Listener {
                 plugin.getScheduler().runTask(() -> {
                     GuiEditLock.inst().create(player, data).open();
                 });
-            });
+            }, 1L);
         }
     }
 }
