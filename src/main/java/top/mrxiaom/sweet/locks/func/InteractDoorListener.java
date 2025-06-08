@@ -19,6 +19,7 @@ import org.jetbrains.annotations.Nullable;
 import top.mrxiaom.pluginbase.economy.IEconomy;
 import top.mrxiaom.pluginbase.economy.NoEconomy;
 import top.mrxiaom.pluginbase.func.AutoRegister;
+import top.mrxiaom.pluginbase.func.GuiManager;
 import top.mrxiaom.pluginbase.utils.AdventureUtil;
 import top.mrxiaom.pluginbase.utils.ListPair;
 import top.mrxiaom.pluginbase.utils.Pair;
@@ -28,6 +29,7 @@ import top.mrxiaom.sweet.locks.SignEditor;
 import top.mrxiaom.sweet.locks.SweetLocks;
 import top.mrxiaom.sweet.locks.data.LockData;
 import top.mrxiaom.sweet.locks.func.entry.FlagDisplay;
+import top.mrxiaom.sweet.locks.gui.GuiEditLock;
 
 import java.util.List;
 
@@ -143,7 +145,11 @@ public class InteractDoorListener extends AbstractModule implements Listener {
             if (data == null) return;
             e.setCancelled(true);
             if (player.isSneaking() && (data.isOwner(player) || player.isOp())) {
-                // TODO: 打开编辑菜单
+                if (GuiManager.inst().getOpeningGui(player) == null) {
+                    plugin.getScheduler().runTask(() -> {
+                        GuiEditLock.inst().create(player, data).open();
+                    });
+                }
             } else {
                 SignLinesFormatter formatter = SignLinesFormatter.inst();
                 Messages messages = data.isOwner(player)

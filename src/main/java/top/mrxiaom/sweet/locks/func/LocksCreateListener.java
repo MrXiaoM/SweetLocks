@@ -15,6 +15,7 @@ import top.mrxiaom.sweet.locks.Messages;
 import top.mrxiaom.sweet.locks.SignEditor;
 import top.mrxiaom.sweet.locks.SweetLocks;
 import top.mrxiaom.sweet.locks.data.LockData;
+import top.mrxiaom.sweet.locks.gui.GuiEditLock;
 
 import java.util.List;
 
@@ -63,7 +64,9 @@ public class LocksCreateListener extends AbstractModule implements Listener {
                 data.addFlags("can-enter", "can-leave");
                 data.save(formatter.generateLockSignLines(data));
                 Messages.create__success.tm(player);
-                // TODO: 打开收费门编辑菜单
+                plugin.getScheduler().runTask(() -> {
+                    GuiEditLock.inst().create(player, data).open();
+                });
             });
         }
     }

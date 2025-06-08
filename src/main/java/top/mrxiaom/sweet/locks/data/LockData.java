@@ -7,6 +7,7 @@ import com.google.gson.JsonSyntaxException;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Sign;
 import org.jetbrains.annotations.NotNull;
@@ -55,6 +56,10 @@ public class LockData {
     @NotNull
     public Sign getSign() {
         return sign;
+    }
+
+    public Location getLocation() {
+        return sign.getLocation();
     }
 
     @NotNull

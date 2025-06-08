@@ -1,0 +1,89 @@
+title: '编辑收费门'
+inventory:
+  - '框框框框框框框框框'
+  - '框　价　　进出　框'
+  - '框　空钱效　　　框'
+  - '框框框框框框框框框'
+main-icons:
+  价:
+    material: GOLD_INGOT
+    display: '&e&l价格'
+    lore:
+      - ''
+      - '&f  其他人进入收费门，需要  '
+      - '&f  支付多少金币?  '
+      - '&f  创建者进入收费门免费'
+      - ''
+      - '&f  价格: &e%price%金币'
+      - ''
+      - '&a左键 &7|&f 修改价格'
+    prompt:
+      tips: '&7[&b收费门&7]&f 请在聊天栏发送&e收费门进入价格&7 (发送&f cancel &7取消设置)'
+      cancel: 'cancel'
+  进:
+    material: IRON_DOOR
+    display: '&e&l允许进入'
+    lore:
+      - ''
+      - '&f  是否允许进入收费门  '
+      - ''
+      - '&f  状态: %flag%'
+      - ''
+      - '&a左键 &7|&f 修改标志'
+    with: '&a是'
+    none: '&c否'
+  出:
+    material: WOODEN_DOOR
+    display: '&e&l允许离开'
+    lore:
+      - ''
+      - '&f  是否允许离开收费门  '
+      - ''
+      - '&f  状态: %flag%'
+      - ''
+      - '&a左键 &7|&f 修改标志'
+    with: '&a是'
+    none: '&c否'
+  空:
+    material: CHEST
+    display: '&e&l背包为空'
+    lore:
+      - ''
+      - '&f  是否要求进入时背包为空  '
+      - ''
+      - '&f  状态: %flag%'
+      - ''
+      - '&a左键 &7|&f 修改标志'
+    with: '&a是'
+    none: '&c否'
+  钱:
+    material: GOLD_NUGGET
+    display: '&e&l账户没有金币'
+    lore:
+      - ''
+      - '&f  是否要求进入时，玩家的账户  '
+      - '&f  没有金币，或者刚好可以付得起  '
+      - '&f  进入收费门的费用  '
+      - ''
+      - '&f  状态: %flag%'
+      - ''
+      - '&a左键 &7|&f 修改标志'
+    with: '&a是'
+    none: '&c否'
+  效:
+    material: POTION
+    display: '&e&l没有药水效果'
+    lore:
+      - ''
+      - '&f  是否要求进入时，玩家  '
+      - '&f  身上不能有药水效果  '
+      - ''
+      - '&f  状态: %flag%'
+      - ''
+      - '&a左键 &7|&f 修改标志'
+    with: '&a是'
+    none: '&c否'
+other-icons:
+  框:
+    material: WHITE_STAINED_GLASS_PANE
+    display: '&f&l '

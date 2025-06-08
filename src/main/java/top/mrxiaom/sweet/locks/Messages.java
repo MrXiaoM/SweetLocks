@@ -66,6 +66,9 @@ public enum Messages implements IHolderAccessor {
             ""
     ),
     door__flag("  &8● &f%flag%"),
+    price__not_number("&7[&b收费门&7]&e 价格的格式不正确"),
+    price__min_limited("&7[&b收费门&7]&e 超出了最小价格限制，最小 %money% 金币"),
+    price__max_limited("&7[&b收费门&7]&e 超出了最大价格限制，最大 %money% 金币"),
 
     ;
     Messages(String defaultValue) {

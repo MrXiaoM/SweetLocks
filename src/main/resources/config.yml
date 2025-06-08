@@ -17,6 +17,9 @@ lock-sign:
   - '%flags%'
 
 money:
+  # 最小和最大价格限制，设为 unlimited 则不限制
+  min: 0.0
+  max: 10000.0
   # 价格显示格式
   format: '%.1f'
   # 如果价格是整数，去除小数部分
