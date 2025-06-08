@@ -71,7 +71,7 @@ main-icons:
     with: '&a是'
     none: '&c否'
   效:
-    material: POTION
+    material: GLASS_BOTTLE
     display: '&e&l没有药水效果'
     lore:
       - ''
