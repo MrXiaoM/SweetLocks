@@ -13,6 +13,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.util.BoundingBox;
 import org.jetbrains.annotations.Nullable;
 import top.mrxiaom.pluginbase.economy.IEconomy;
 import top.mrxiaom.pluginbase.economy.NoEconomy;
@@ -35,6 +36,7 @@ import java.util.List;
 @AutoRegister
 public class InteractDoorListener extends AbstractModule implements Listener {
     private final boolean supportBlockData = Util.isPresent("org.bukkit.block.data.BlockData");
+    private final boolean supportBoundingBox = Util.isPresent("org.bukkit.util.BoundingBox");
     private final List<String> doors = new ArrayList<>();
     private final List<String> notSolidMaterials = new ArrayList<>();
     private double taxPercent;
@@ -76,11 +78,11 @@ public class InteractDoorListener extends AbstractModule implements Listener {
         if (notSolidMaterials.contains(block.getType().name().toUpperCase())) {
             return false;
         }
-        try {
+        if (supportBoundingBox) {
             if (block.getBoundingBox().getHeight() < solidMinHeight) {
                 return false;
             }
-        } catch (Throwable ignored) {}
+        }
         return true;
     }
 
@@ -295,14 +297,7 @@ public class InteractDoorListener extends AbstractModule implements Listener {
         int x = block.getX();
         int y = block.getY();
         int z = block.getZ();
-        // TODO: 这里可能依然存在问题，需要更换方法
-        // 1.8    - 在某个方向偏离了1格方块
-        // 1.21.4 - 工作正常
-        return new Location(block.getWorld(),
-                x > 0 ? (x - 0.5) : (x + 0.5),
-                y,
-                z > 0 ? (z - 0.5) : (z + 0.5)
-        );
+        return new Location(block.getWorld(), x + 0.5, y, z + 0.5);
     }
 
     public static InteractDoorListener inst() {
