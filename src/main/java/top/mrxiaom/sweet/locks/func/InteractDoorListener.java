@@ -42,6 +42,7 @@ public class InteractDoorListener extends AbstractModule implements Listener {
     private double taxPercent;
     private boolean preventSolidTarget;
     private double solidMinHeight;
+    private double reachInteract;
     public InteractDoorListener(SweetLocks plugin) {
         super(plugin);
         registerEvents();
@@ -66,6 +67,7 @@ public class InteractDoorListener extends AbstractModule implements Listener {
         }
         preventSolidTarget = config.getBoolean("prevent-solid-target.enable", true);
         solidMinHeight = config.getDouble("prevent-solid-target.min-height", 0.6);
+        reachInteract = config.getDouble("reach.interact", 2.6);
     }
 
     public boolean isSolid(Block block) {
@@ -109,9 +111,14 @@ public class InteractDoorListener extends AbstractModule implements Listener {
 
         // 右键点击铁门
         if (isDoorBlock(block)) {
-            Block baseBlock = isBottomHalfDoor(block)
+            Boolean bottomHalf = isBottomHalfDoor(block);
+            Block bottomBlock = bottomHalf == false // 获取门的下部分方块，如果方块不是门，则获取方块本身
+                    ? block.getRelative(BlockFace.DOWN)
+                    : block;
+            Block baseBlock = bottomHalf == true // 获取门上面承载告示牌的方块
                     ? block.getRelative(0, 2, 0)
                     : block.getRelative(0, 1, 0);
+            // 通过点击方向的两侧寻找收费门告示牌
             LockData data = findSign(baseBlock, clickFace);
             if (data == null) return;
             e.setCancelled(true);
@@ -140,6 +147,13 @@ public class InteractDoorListener extends AbstractModule implements Listener {
             if (!player.isSneaking()) {
                 (isEntering ? Messages.door__entering : Messages.door__leaving).tm(player, replacements);
                 return;
+            }
+            if (reachInteract >= 0 && !player.hasPermission("sweet.locks.bypass.distance")) {
+                double distance = bottomBlock.getLocation().distance(player.getLocation());
+                if (distance > reachInteract) {
+                    Messages.door__too_far.tm(player);
+                    return;
+                }
             }
             // 判定处理 flags
             if (isEntering) { // 进入时
@@ -259,8 +273,14 @@ public class InteractDoorListener extends AbstractModule implements Listener {
         }
     }
 
+    /**
+     * 获取当前方块是否门的下部分方块
+     * @param block 方块
+     * @return 如果方块不是门，则返回 <code>null</code>
+     */
+    @Nullable
     @SuppressWarnings("deprecation")
-    private boolean isBottomHalfDoor(Block block) {
+    private Boolean isBottomHalfDoor(Block block) {
         if (supportBlockData) {
             org.bukkit.block.data.BlockData data = block.getState().getBlockData();
             if (data instanceof org.bukkit.block.data.Bisected) {
@@ -272,7 +292,7 @@ public class InteractDoorListener extends AbstractModule implements Listener {
                 return !((org.bukkit.material.Door) data).isTopHalf();
             }
         }
-        return false;
+        return null;
     }
 
     private @Nullable LockData findSign(Block baseBlock, BlockFace clickFace) {

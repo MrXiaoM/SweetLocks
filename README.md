@@ -34,6 +34,7 @@
 
 + `sweet.locks.create` 允许创建收费门
 + `sweet.locks.bypass.tax` 忽略创建者收取金币的税收
++ `sweet.locks.bypass.distance` 忽略玩家进出收费门要求的距离限制 (默认 `2.6格` 以内)
 
 ## 用法
 

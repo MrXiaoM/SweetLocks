@@ -45,6 +45,7 @@ public enum Messages implements IHolderAccessor {
     door__entering("&7[&a收费门&7]&f 这是&e %player% &f的收费门，按下&e Shift+右键 &f花费&e %price% &f金币进入."),
     door__leaving("&7[&a收费门&7]&f 这是&e %player% &f的收费门，按下&e Shift+右键 &f离开."),
 
+    door__too_far("&7[&a收费门&7]&e 你离得太远了，靠近点再试试"),
     door__can_not_enter("&7[&a收费门&7]&e 这个收费门不能进入."),
     door__can_not_leave("&7[&a收费门&7]&e 这个收费门不能离开."),
     door__has_items("&7[&a收费门&7]&e 你的身上有物品，不能进入这个收费门."),
