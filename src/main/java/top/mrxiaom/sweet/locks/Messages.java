@@ -83,6 +83,7 @@ public enum Messages implements IHolderAccessor {
     reach__not_number("&7[&b收费门&7]&e 距离的格式不正确."),
     reach__min_limited("&7[&b收费门&7]&e 超出了最小距离限制，最小 %reach% 格."),
     reach__max_limited("&7[&b收费门&7]&e 超出了最大距离限制，最大 %reach% 格."),
+    viewer_title("容器预览"),
 
     ;
     Messages(String defaultValue) {

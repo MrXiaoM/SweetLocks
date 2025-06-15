@@ -8,6 +8,26 @@ door-blocks:
   - IRON_DOOR
   - IRON_DOOR_BLOCK
 
+# 扩展功能: 容器内容预览
+view-container:
+  # 要求告示牌包含什么内容时，点击告示牌预览容器
+  # 取消注释这个选项，则启用此功能
+  #sign: '查看容器'
+  # 哪些容器可以触发预览
+  # https://javadoc.mcio.dev/spigot/1.21.4/org/bukkit/event/inventory/InventoryType.html
+  # 默认有 箱子、发射器、投掷器、漏斗、潜影箱、木桶
+  types:
+    - CHEST
+    - DISPENSER
+    - DROPPER
+    - HOPPER
+    - SHULKER_BOX
+    - BARREL
+  # 什么操作点击告示牌，可以触发预览
+  # LEFT, RIGHT, SHIFT_LEFT, SHIFT_RIGHT
+  actions:
+    - SHIFT_LEFT
+
 create:
   # 在第一行匹配时，创建收费门
   sign-line: '$lock'
