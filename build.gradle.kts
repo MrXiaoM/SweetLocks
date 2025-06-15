@@ -10,7 +10,6 @@ val targetJavaVersion = 8
 val shadowGroup = "top.mrxiaom.sweet.locks.libs"
 
 repositories {
-    mavenLocal()
     mavenCentral()
     maven("https://repo.codemc.io/repository/maven-public/")
     maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
@@ -22,7 +21,6 @@ repositories {
 configurations.create("shadowLink")
 dependencies {
     compileOnly("org.spigotmc:spigot-api:1.20-R0.1-SNAPSHOT")
-    // compileOnly("org.spigotmc:spigot:1.20") // NMS
 
     compileOnly("net.milkbowl.vault:VaultAPI:1.7")
     compileOnly("me.clip:placeholderapi:2.11.6")
