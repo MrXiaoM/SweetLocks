@@ -100,7 +100,7 @@ public class InteractDoorListener extends AbstractModule implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.LOWEST)
     public void onInteract(PlayerInteractEvent e) {
         if (e.useInteractedBlock().equals(Event.Result.DENY)) return;
         Player player = e.getPlayer();

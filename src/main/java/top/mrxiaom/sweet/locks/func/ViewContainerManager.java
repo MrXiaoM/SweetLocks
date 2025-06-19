@@ -114,7 +114,7 @@ public class ViewContainerManager extends AbstractModule implements Listener {
     }
 
     @SuppressWarnings({"deprecation"})
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.LOWEST)
     public void onInteract(PlayerInteractEvent e) {
         if (viewSign == null || e.useInteractedBlock().equals(Event.Result.DENY)) return;
         Player player = e.getPlayer();
@@ -145,6 +145,7 @@ public class ViewContainerManager extends AbstractModule implements Listener {
                 Container container = (Container) containerState;
                 Inventory inv = container.getInventory();
                 if (viewTypes.contains(inv.getType())) {
+                    e.setCancelled(true);
                     Holder holder = new Holder(player, inv);
                     player.openInventory(holder.getInventory());
                 }
