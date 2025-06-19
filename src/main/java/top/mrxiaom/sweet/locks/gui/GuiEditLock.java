@@ -91,20 +91,20 @@ public class GuiEditLock extends AbstractGuiModule {
     protected void loadMainIcon(ConfigurationSection section, String id, LoadedIcon icon) {
         if (id.length() != 1) return;
         if (id.equals("价")) {
-            String promptTips = section.getString(id = ".prompt.tips", "&7[&b收费门&7]&f 请在聊天栏发送&e收费门进入价格&7 (发送&f cancel &7取消设置)");
-            String promptCancel = section.getString(id = ".prompt.cancel", "cancel");
+            String promptTips = section.getString(id + ".prompt.tips", "&7[&b收费门&7]&f 请在聊天栏发送&e收费门进入价格&7 (发送&f cancel &7取消设置)");
+            String promptCancel = section.getString(id + ".prompt.cancel", "cancel");
             iconPrice = new PromptIcon(icon, promptTips, promptCancel);
             return;
         }
         if (id.equals("距")) {
-            String promptTips = section.getString(id = ".prompt.tips", "&7[&b收费门&7]&f 请在聊天栏发送&e收费门进入传送距离&7 (发送&f cancel &7取消设置)");
-            String promptCancel = section.getString(id = ".prompt.cancel", "cancel");
+            String promptTips = section.getString(id + ".prompt.tips", "&7[&b收费门&7]&f 请在聊天栏发送&e收费门进入传送距离&7 (发送&f cancel &7取消设置)");
+            String promptCancel = section.getString(id + ".prompt.cancel", "cancel");
             iconReachEnter = new PromptIcon(icon, promptTips, promptCancel);
             return;
         }
         if (id.equals("离")) {
-            String promptTips = section.getString(id = ".prompt.tips", "&7[&b收费门&7]&f 请在聊天栏发送&e收费门离开传送距离&7 (发送&f cancel &7取消设置)");
-            String promptCancel = section.getString(id = ".prompt.cancel", "cancel");
+            String promptTips = section.getString(id + ".prompt.tips", "&7[&b收费门&7]&f 请在聊天栏发送&e收费门离开传送距离&7 (发送&f cancel &7取消设置)");
+            String promptCancel = section.getString(id + ".prompt.cancel", "cancel");
             iconReachLeave = new PromptIcon(icon, promptTips, promptCancel);
             return;
         }
