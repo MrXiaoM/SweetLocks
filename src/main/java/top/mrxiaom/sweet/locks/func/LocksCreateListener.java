@@ -17,6 +17,7 @@ import top.mrxiaom.sweet.locks.Messages;
 import top.mrxiaom.sweet.locks.SignEditor;
 import top.mrxiaom.sweet.locks.SweetLocks;
 import top.mrxiaom.sweet.locks.data.LockData;
+import top.mrxiaom.sweet.locks.func.entry.Group;
 import top.mrxiaom.sweet.locks.gui.GuiEditLock;
 
 import java.util.List;
@@ -24,7 +25,6 @@ import java.util.List;
 @AutoRegister
 public class LocksCreateListener extends AbstractModule implements Listener {
     private String createSignLine;
-    private double createLocksPrice;
     private double createDefaultPrice;
     private int createDefaultReachEnter;
     private int createDefaultReachLeave;
@@ -36,7 +36,6 @@ public class LocksCreateListener extends AbstractModule implements Listener {
     @Override
     public void reloadConfig(MemoryConfiguration config) {
         this.createSignLine = config.getString("create.sign-line", "$lock");
-        this.createLocksPrice = config.getDouble("create.create-price", 0.0);
         this.createDefaultPrice = config.getDouble("create.default-price", 0.0);
         this.createDefaultReachEnter = config.getInt("create.default-reach-enter", 0);
         this.createDefaultReachLeave = config.getInt("create.default-reach-leave", 0);
@@ -69,6 +68,8 @@ public class LocksCreateListener extends AbstractModule implements Listener {
                 Messages.no_permission.tm(player);
                 return;
             }
+            Group group = GroupManager.inst().getGroup(player);
+            double createLocksPrice = group.getCreatePrice();
             if (createLocksPrice > 0) {
                 IEconomy economy = plugin.getEconomy();
                 if (!economy.has(player, createLocksPrice)) {

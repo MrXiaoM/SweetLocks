@@ -28,6 +28,7 @@ import top.mrxiaom.sweet.locks.SignEditor;
 import top.mrxiaom.sweet.locks.SweetLocks;
 import top.mrxiaom.sweet.locks.data.LockData;
 import top.mrxiaom.sweet.locks.func.entry.FlagDisplay;
+import top.mrxiaom.sweet.locks.func.entry.Group;
 import top.mrxiaom.sweet.locks.gui.GuiEditLock;
 
 import java.util.ArrayList;
@@ -39,7 +40,6 @@ public class InteractDoorListener extends AbstractModule implements Listener {
     private final boolean supportBoundingBox = Util.isPresent("org.bukkit.util.BoundingBox");
     private final List<String> doors = new ArrayList<>();
     private final List<String> notSolidMaterials = new ArrayList<>();
-    private double taxPercent;
     private boolean preventSolidTarget;
     private double solidMinHeight;
     private double reachInteract;
@@ -57,13 +57,6 @@ public class InteractDoorListener extends AbstractModule implements Listener {
         }
         for (String s : config.getStringList("prevent-solid-target.not-solid-materials")) {
             notSolidMaterials.add(s.toUpperCase());
-        }
-        String taxString = config.getString("money.tax", "0%");
-        if (taxString.endsWith("%")) {
-            double v = Util.parseDouble(taxString.replace("%", "")).orElse(0.0);
-            taxPercent = v / 100.0;
-        } else {
-            taxPercent = Util.parseDouble(taxString).orElse(0.0);
         }
         preventSolidTarget = config.getBoolean("prevent-solid-target.enable", true);
         solidMinHeight = config.getDouble("prevent-solid-target.min-height", 0.6);
@@ -199,7 +192,8 @@ public class InteractDoorListener extends AbstractModule implements Listener {
             if (player.hasPermission("sweet.locks.bypass.tax")) {
                 tax = 0.0;
             } else {
-                tax = price * taxPercent;
+                Group group = GroupManager.inst().getGroup(player);
+                tax = price * group.getTaxPercent();
             }
             double money = Math.max(0, price - tax); // 最终金钱 - 给创建者的金币
             if (isEntering && price > 0 && !data.isOwner(player)) {

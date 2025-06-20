@@ -27,7 +27,9 @@ import top.mrxiaom.sweet.locks.Messages;
 import top.mrxiaom.sweet.locks.SweetLocks;
 import top.mrxiaom.sweet.locks.data.LockData;
 import top.mrxiaom.sweet.locks.func.AbstractGuiModule;
+import top.mrxiaom.sweet.locks.func.GroupManager;
 import top.mrxiaom.sweet.locks.func.SignLinesFormatter;
+import top.mrxiaom.sweet.locks.func.entry.Group;
 import top.mrxiaom.sweet.locks.gui.edit.FlagIcon;
 import top.mrxiaom.sweet.locks.gui.edit.PromptIcon;
 import top.mrxiaom.sweet.locks.utils.Prompter;
@@ -46,10 +48,6 @@ public class GuiEditLock extends AbstractGuiModule {
     private PromptIcon iconPrice;
     private PromptIcon iconReachEnter;
     private PromptIcon iconReachLeave;
-    private Double priceMin;
-    private Double priceMax;
-    private int reachEnterMin, reachEnterMax;
-    private int reachLeaveMin, reachLeaveMax;
     public GuiEditLock(SweetLocks plugin) {
         super(plugin, plugin.resolve("./gui/edit-lock.yml"));
         presetFlagMap.put("进", "can-enter");
@@ -66,10 +64,6 @@ public class GuiEditLock extends AbstractGuiModule {
 
     @Override
     public void reloadConfig(MemoryConfiguration cfg) {
-        reachEnterMin = cfg.getInt("reach.enter.min", 0);
-        reachEnterMax = cfg.getInt("reach.enter.max", 0);
-        reachLeaveMin = cfg.getInt("reach.leave.min", 0);
-        reachLeaveMax = cfg.getInt("reach.leave.max", 0);
         if (!file.exists()) {
             plugin.saveResource("gui/edit-lock.yml", file);
         }
@@ -79,12 +73,6 @@ public class GuiEditLock extends AbstractGuiModule {
     @Override
     protected void reloadMenuConfig(YamlConfiguration config) {
         flagIcons.clear();
-        String priceMinStr = config.getString("money.min", "0");
-        String priceMaxStr = config.getString("money.max", "10000");
-        priceMin = priceMinStr.equals("unlimited") ? null
-                : Util.parseDouble(priceMinStr).orElse(0.0);
-        priceMax = priceMinStr.equals("unlimited") ? null
-                : Util.parseDouble(priceMaxStr).orElse(10000.0);
     }
 
     @Override
@@ -179,8 +167,10 @@ public class GuiEditLock extends AbstractGuiModule {
          */
         private boolean clicked = false;
         private Inventory inventory;
+        private Group group;
         protected Impl(Player player, LockData data) {
             super(player, guiTitle, guiInventory);
+            this.group = GroupManager.inst().getGroup(player);
             this.data = data;
         }
 
@@ -227,6 +217,8 @@ public class GuiEditLock extends AbstractGuiModule {
                 promptEdit(iconPrice, message -> {
                     Double price = Util.parseDouble(message).orElse(null);
                     if (price != null) {
+                        Double priceMin = group.getPriceMin();
+                        Double priceMax = group.getPriceMax();;
                         if (priceMin != null && price < priceMin) {
                             Messages.price__min_limited.tm(player, Pair.of("%money%", priceMin));
                         } else if (priceMax != null && price > priceMax) {
@@ -246,6 +238,8 @@ public class GuiEditLock extends AbstractGuiModule {
                 promptEdit(iconReachEnter, message -> {
                     Integer reach = Util.parseInt(message).orElse(null);
                     if (reach != null) {
+                        int reachEnterMin = group.getReachEnterMin();
+                        int reachEnterMax = group.getReachEnterMax();
                         if (reach < reachEnterMin) {
                             Messages.reach__min_limited.tm(player, Pair.of("%reach%", reachEnterMin));
                         } else if (reach > reachEnterMax) {
@@ -265,6 +259,8 @@ public class GuiEditLock extends AbstractGuiModule {
                 promptEdit(iconReachLeave, message -> {
                     Integer reach = Util.parseInt(message).orElse(null);
                     if (reach != null) {
+                        int reachLeaveMin = group.getReachLeaveMin();
+                        int reachLeaveMax = group.getReachLeaveMax();
                         if (reach < reachLeaveMin) {
                             Messages.reach__min_limited.tm(player, Pair.of("%reach%", reachLeaveMin));
                         } else if (reach > reachLeaveMax) {

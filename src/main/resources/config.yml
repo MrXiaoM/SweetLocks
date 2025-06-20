@@ -39,6 +39,28 @@ create:
   default-reach-enter: 0
   default-reach-leave: 0
 
+# 权限组配置
+# 组名不能为 default，不能包含英文的点符号 (.)
+# 玩家拥有权限 sweet.locks.group.<组名> 即代表玩家在某个组内
+# priority 越小的组越先匹配
+groups:
+  # 示例组名，其对应的权限是 sweet.locks.group.vip
+  vip:
+    # 优先级
+    priority: 1000
+    # 以下选项均为可选，如果删除某项，则该项使用配置文件中的默认值
+    create-price: 0
+    money:
+      min: 0.0
+      max: 10000.0
+      tax: '0%'
+    reach-enter:
+      min: 0
+      max: 0
+    reach-leave:
+      min: 0
+      max: 0
+
 # 收费铁门牌子内容，支持 MiniMessage
 lock-sign:
   - '<dark_aqua>[<aqua><b>收费门</b><dark_aqua>]'
