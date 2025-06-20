@@ -78,7 +78,7 @@ public class ViewContainerManager extends AbstractModule implements Listener {
 
     @Override
     public void reloadConfig(MemoryConfiguration config) {
-        viewSign = config.getString("view-container.sign", null);
+        viewSign = config.getString("view-container.sign", "").trim();
         viewTypes.clear();
         viewActions.clear();
         for (String s : config.getStringList("view-container.types")) {
@@ -96,6 +96,7 @@ public class ViewContainerManager extends AbstractModule implements Listener {
     }
 
     public boolean checkView(String[] lines) {
+        if (viewSign.isEmpty()) return false;
         for (String line : lines) {
             if (line != null && line.contains(viewSign)) {
                 return true;
@@ -116,7 +117,7 @@ public class ViewContainerManager extends AbstractModule implements Listener {
     @SuppressWarnings({"deprecation"})
     @EventHandler(priority = EventPriority.LOWEST)
     public void onInteract(PlayerInteractEvent e) {
-        if (viewSign == null || e.useInteractedBlock().equals(Event.Result.DENY)) return;
+        if (viewSign.isEmpty() || e.useInteractedBlock().equals(Event.Result.DENY)) return;
         Player player = e.getPlayer();
         Block block = e.getClickedBlock();
         if (block == null) return;
