@@ -1,6 +1,3 @@
-plugins {
-    java
-}
 // ========== 设置 ===========
 
 val targetJavaVersion = 8
@@ -9,7 +6,7 @@ val sharedSpigotAPI = "1.13"
 
 // ==========================
 
-allprojects {
+subprojects {
     apply(plugin="java")
     repositories {
         mavenCentral()
@@ -51,10 +48,6 @@ subprojects {
     dependencies {
         if (name.startsWith("v")) add("compileOnly", shared)
     }
-}
-dependencies {
-    compileOnly("org.spigotmc:spigot-api:$sharedSpigotAPI-R0.1-SNAPSHOT")
-    compileOnly(shared)
 }
 object NMSSource {
     class Source(

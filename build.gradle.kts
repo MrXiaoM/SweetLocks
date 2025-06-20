@@ -32,9 +32,7 @@ dependencies {
     implementation("com.github.technicallycoded:FoliaLib:0.4.4")
     implementation("org.jetbrains:annotations:24.0.0")
     implementation("top.mrxiaom:PluginBase:1.4.8")
-    for (nms in project.project(":nms").also {
-        implementation(it)
-    }.subprojects) {
+    for (nms in project.project(":nms").subprojects) {
         if (nms.name == "shared") implementation(nms)
         if (nms.name.startsWith("v")) add("shadowLink", nms)
     }
