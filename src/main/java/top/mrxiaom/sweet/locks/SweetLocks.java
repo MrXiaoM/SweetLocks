@@ -11,8 +11,10 @@ import top.mrxiaom.pluginbase.economy.EnumEconomy;
 import top.mrxiaom.pluginbase.economy.IEconomy;
 import org.jetbrains.annotations.NotNull;
 import top.mrxiaom.pluginbase.func.LanguageManager;
+import top.mrxiaom.pluginbase.utils.ConfigUpdater;
 import top.mrxiaom.pluginbase.utils.scheduler.FoliaLibScheduler;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,6 +25,7 @@ public class SweetLocks extends BukkitPlugin {
 
     private final List<String> disableWorlds = new ArrayList<>();
     private final PlatformScheduler platform;
+    private ConfigUpdater configUpdater;
     public SweetLocks() {
         super(options()
                 .bungee(false)
@@ -72,10 +75,26 @@ public class SweetLocks extends BukkitPlugin {
         LanguageManager.inst()
                 .setLangFile("messages.yml")
                 .register(Messages.class, Messages::holder);
+        configUpdater = ConfigUpdater.create(this, "config.yml")
+                .fullMatch("disable-worlds")
+                .fullMatch("door-blocks")
+                .prefixMatch("view-container.")
+                .prefixMatch("create.")
+                .fullMatch("groups")
+                .fullMatch("lock-sign")
+                .prefixMatch("money.")
+                .prefixMatch("reach.")
+                .prefixMatch("prevent-solid-target.")
+                .prefixMatch("flags.");
     }
 
     @Override
     protected void beforeReloadConfig(FileConfiguration config) {
+        if (ConfigUpdater.supportComments) {
+            // 仅在支持设置配置文件注释的版本更新配置
+            configUpdater.apply(config, new File(getDataFolder(), "config.yml"));
+        }
+
         disableWorlds.clear();
         disableWorlds.addAll(config.getStringList("disable-worlds"));
     }
