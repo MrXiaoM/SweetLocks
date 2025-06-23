@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import com.google.gson.*;
 import de.tr7zw.changeme.nbtapi.NBT;
 import de.tr7zw.changeme.nbtapi.iface.ReadWriteNBT;
+import de.tr7zw.changeme.nbtapi.iface.ReadWriteNBTCompoundList;
 import de.tr7zw.changeme.nbtapi.iface.ReadWriteNBTList;
 import de.tr7zw.changeme.nbtapi.utils.MinecraftVersion;
 import net.kyori.adventure.platform.bukkit.BukkitComponentSerializer;
@@ -11,6 +12,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
@@ -31,13 +33,16 @@ import static top.mrxiaom.pluginbase.utils.AdventureUtil.miniMessage;
 
 public class SignEditor {
     private static Gson gson = new GsonBuilder().create();
+    private static boolean useNbtAsTextComponent;
     private static boolean supportPersistentData;
     private static boolean supportSignSide;
     private static boolean supportBlockData;
     private static @NotNull GsonComponentSerializer serializer = BukkitComponentSerializer.gson();
+    private static @NotNull LegacyComponentSerializer legacy = BukkitComponentSerializer.legacy();
     private static IBlock blockNMS;
 
     protected static void init() {
+        useNbtAsTextComponent = MinecraftVersion.isAtLeastVersion(MinecraftVersion.MC1_21_R4);
         supportPersistentData = Util.isPresent("org.bukkit.persistence.PersistentDataContainer");
         supportSignSide = Util.isPresent("org.bukkit.block.sign.SignSide");
         supportBlockData = Util.isPresent("org.bukkit.block.data.BlockData");
@@ -139,11 +144,35 @@ public class SignEditor {
             // 1.20.x 双面告示牌支持
             if (supportSignSide) {
                 ReadWriteNBT frontText = nbt.getOrCreateCompound("front_text");
-                ReadWriteNBTList<String> messages = frontText.getStringList("messages");
-                for (int i = 0; i < signLines.size(); i++) {
-                    messages.set(i, serializeToJSON(i, content, signLines));
+                if (useNbtAsTextComponent) {
+                    try {
+                        // 1.21.5+ 文本组件改用 NBT 而非 JSON 字符串
+                        frontText.removeKey("messages");
+                        ReadWriteNBTCompoundList messages = frontText.getCompoundList("messages");
+                        for (int i = 0; i < signLines.size(); i++) {
+                            String json = serializeToJSON(i, content, signLines);
+                            ReadWriteNBT component = NBT.parseNBT(json);
+                            messages.addCompound().mergeCompound(component);
+                        }
+                    } catch (Exception e) {
+                        // 如果解析出错，则使用旧版颜色字符来应用木牌
+                        frontText.removeKey("messages");
+                        ReadWriteNBTList<String> messages = frontText.getStringList("messages");
+                        for (int i = 0; i < signLines.size(); i++) {
+                            String str = signLines.get(i);
+                            String legacyText = str.isEmpty() ? "" : legacy.serialize(miniMessage(str));
+                            messages.set(i, legacyText);
+                        }
+                    }
+                } else {
+                    frontText.removeKey("messages");
+                    ReadWriteNBTList<String> messages = frontText.getStringList("messages");
+                    for (int i = 0; i < signLines.size(); i++) {
+                        messages.set(i, serializeToJSON(i, content, signLines));
+                    }
                 }
             } else {
+                // 旧版的单面告示牌格式
                 for (int i = 0; i < signLines.size(); i++) {
                     nbt.setString("Text" + (i + 1), serializeToJSON(i, content, signLines));
                 }
