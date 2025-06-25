@@ -28,7 +28,7 @@ dependencies {
     implementation("net.kyori:adventure-api:4.22.0")
     implementation("net.kyori:adventure-platform-bukkit:4.4.0")
     implementation("net.kyori:adventure-text-minimessage:4.22.0")
-    implementation("de.tr7zw:item-nbt-api:2.15.0")
+    implementation("de.tr7zw:item-nbt-api:2.15.1-SNAPSHOT")
     implementation("com.github.technicallycoded:FoliaLib:0.4.4")
     implementation("org.jetbrains:annotations:24.0.0")
     implementation("top.mrxiaom:PluginBase:1.4.9")
