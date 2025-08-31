@@ -21,7 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import top.mrxiaom.pluginbase.func.AutoRegister;
 import top.mrxiaom.pluginbase.func.gui.IModifier;
 import top.mrxiaom.pluginbase.func.gui.LoadedIcon;
-import top.mrxiaom.pluginbase.gui.IGui;
+import top.mrxiaom.pluginbase.gui.IGuiHolder;
 import top.mrxiaom.pluginbase.utils.*;
 import top.mrxiaom.sweet.locks.Messages;
 import top.mrxiaom.sweet.locks.SweetLocks;
@@ -107,7 +107,7 @@ public class GuiEditLock extends AbstractGuiModule {
     }
 
     @Override
-    protected ItemStack applyMainIcon(IGui instance, Player player, char id, int index, int appearTimes) {
+    protected ItemStack applyMainIcon(IGuiHolder instance, Player player, char id, int index, int appearTimes) {
         Impl gui = (Impl) instance;
         SignLinesFormatter formatter = SignLinesFormatter.inst();
         if (id == '价') {
@@ -160,13 +160,12 @@ public class GuiEditLock extends AbstractGuiModule {
         return new Impl(player, data);
     }
 
-    public class Impl extends Gui implements InventoryHolder {
+    public class Impl extends Gui {
         private final LockData data;
         /**
          * 主要图标锁，以免在运行定时器时再次点击图标
          */
         private boolean clicked = false;
-        private Inventory inventory;
         private Group group;
         protected Impl(Player player, LockData data) {
             super(player, guiTitle, guiInventory);
@@ -176,12 +175,6 @@ public class GuiEditLock extends AbstractGuiModule {
 
         public LockData getData() {
             return data;
-        }
-
-        @NotNull
-        @Override
-        public Inventory getInventory() {
-            return inventory;
         }
 
         @Override
@@ -197,9 +190,9 @@ public class GuiEditLock extends AbstractGuiModule {
         }
 
         @Override
-        protected Inventory create(InventoryHolder holder, int size, String title) {
+        protected Inventory create(int size, String title) {
             String parsedTitle = ColorHelper.parseColor(PAPI.setPlaceholders(player, title));
-            return inventory = super.create(this, size, parsedTitle);
+            return super.create(size, parsedTitle);
         }
 
         @Override
@@ -289,7 +282,7 @@ public class GuiEditLock extends AbstractGuiModule {
                 plugin.getPlatform().runAtLocation(data.getLocation(), t -> {
                     SignLinesFormatter formatter = SignLinesFormatter.inst();
                     data.save(formatter.generateLockSignLines(data));
-                    plugin.getScheduler().runTask(() -> updateInventory(inventory));
+                    plugin.getScheduler().runTask(() -> updateInventory(getInventory()));
                 });
                 return;
             }

@@ -30,8 +30,8 @@ dependencies {
     implementation("net.kyori:adventure-platform-bukkit:4.4.0")
     implementation("net.kyori:adventure-text-minimessage:4.22.0")
     implementation("de.tr7zw:item-nbt-api:2.15.2-SNAPSHOT")
-    implementation("top.mrxiaom:PluginBase:1.5.4")
     implementation("com.github.technicallycoded:FoliaLib:0.4.4") { isTransitive = false }
+    implementation("top.mrxiaom.pluginbase:library:1.6.3")
     for (nms in project.project(":nms").subprojects) {
         if (nms.name == "shared") implementation(nms)
         if (nms.name.startsWith("v")) add("shadowLink", nms)
