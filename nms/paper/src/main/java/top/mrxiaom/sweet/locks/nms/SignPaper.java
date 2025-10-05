@@ -11,10 +11,11 @@ public class SignPaper implements ISign {
         Sign.class.getDeclaredMethod("line", int.class, Component.class);
     }
     @Override
-    public void setLines(Sign sign, List<Component> lines) {
+    public boolean setLines(Sign sign, List<Component> lines) {
         for (int i = 0; i < lines.size() && i < 4; i++) {
             sign.line(i, lines.get(i));
         }
         sign.update();
+        return false;
     }
 }

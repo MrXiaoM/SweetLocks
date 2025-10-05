@@ -38,7 +38,7 @@ public class SignNBT implements ISign {
     }
 
     @Override
-    public void setLines(Sign sign, List<Component> lines) {
+    public boolean setLines(Sign sign, List<Component> lines) {
         NBT.modify(sign, nbt -> {
             // 1.20.x 双面告示牌支持
             if (supportSignSide) {
@@ -77,5 +77,6 @@ public class SignNBT implements ISign {
                 }
             }
         });
+        return true;
     }
 }

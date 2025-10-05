@@ -107,8 +107,9 @@ public class SignEditor {
             return;
         }
         String json = data.saveToJson();
-        setRaw(sign, json, signLines);
-        update(sign.getBlock());
+        if (setRaw(sign, json, signLines)) {
+            update(sign.getBlock());
+        }
     }
 
     private static @Nullable String getRaw(@NotNull Sign sign) {
@@ -135,7 +136,7 @@ public class SignEditor {
     }
 
     @SuppressWarnings({"deprecation"})
-    private static void setRaw(@NotNull Sign sign, @Nullable String content, List<String> signLines) {
+    private static boolean setRaw(@NotNull Sign sign, @Nullable String content, List<String> signLines) {
         if (supportPersistentData) {
             NBT.modifyPersistentData(sign, nbt -> {
                 if (content == null) {
@@ -157,7 +158,7 @@ public class SignEditor {
         for (int i = 0; i < signLines.size() && i < 4; i++) {
             lines.add(serializeToComponent(i, content, signLines));
         }
-        signApi.setLines(sign, lines);
+        return signApi.setLines(sign, lines);
     }
 
     private static Component serializeToComponent(int i, @Nullable String content, List<String> signLines) {
