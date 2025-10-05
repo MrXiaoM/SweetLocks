@@ -17,12 +17,15 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
+import org.bukkit.block.sign.SignSide;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import top.mrxiaom.pluginbase.utils.Util;
 import top.mrxiaom.sweet.locks.data.LockData;
 import top.mrxiaom.sweet.locks.nms.BlockBukkit;
 import top.mrxiaom.sweet.locks.nms.IBlock;
+import top.mrxiaom.sweet.locks.nms.ISign;
+import top.mrxiaom.sweet.locks.nms.SignNBT;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -33,19 +36,21 @@ import static top.mrxiaom.pluginbase.utils.AdventureUtil.miniMessage;
 
 public class SignEditor {
     private static Gson gson = new GsonBuilder().create();
-    private static boolean useNbtAsTextComponent;
     private static boolean supportPersistentData;
-    private static boolean supportSignSide;
     private static boolean supportBlockData;
+    private static ISign signApi;
     private static @NotNull GsonComponentSerializer serializer = BukkitComponentSerializer.gson();
-    private static @NotNull LegacyComponentSerializer legacy = BukkitComponentSerializer.legacy();
     private static IBlock blockNMS;
 
     protected static void init() {
-        useNbtAsTextComponent = MinecraftVersion.isAtLeastVersion(MinecraftVersion.MC1_21_R4);
         supportPersistentData = Util.isPresent("org.bukkit.persistence.PersistentDataContainer");
-        supportSignSide = Util.isPresent("org.bukkit.block.sign.SignSide");
         supportBlockData = Util.isPresent("org.bukkit.block.data.BlockData");
+        try {
+            ISign paper = (ISign) Class.forName("top.mrxiaom.sweet.locks.nms.SignPaper").getConstructor().newInstance();
+            signApi = paper;
+        } catch (Throwable ignored) {
+            signApi = new SignNBT();
+        }
         if (!supportPersistentData) {
             String packageName = MinecraftVersion.getVersion().getPackageName();
             try {
@@ -129,6 +134,7 @@ public class SignEditor {
         }
     }
 
+    @SuppressWarnings({"deprecation"})
     private static void setRaw(@NotNull Sign sign, @Nullable String content, List<String> signLines) {
         if (supportPersistentData) {
             NBT.modifyPersistentData(sign, nbt -> {
@@ -139,54 +145,28 @@ public class SignEditor {
                 }
             });
         }
-        NBT.modify(sign, nbt -> {
-            nbt.setBoolean("is_waxed", content != null);
-            // 1.20.x 双面告示牌支持
-            if (supportSignSide) {
-                ReadWriteNBT frontText = nbt.getOrCreateCompound("front_text");
-                if (useNbtAsTextComponent) {
-                    try {
-                        // 1.21.5+ 文本组件改用 NBT 而非 JSON 字符串
-                        frontText.removeKey("messages");
-                        ReadWriteNBTCompoundList messages = frontText.getCompoundList("messages");
-                        for (int i = 0; i < signLines.size(); i++) {
-                            String json = serializeToJSON(i, content, signLines);
-                            ReadWriteNBT component = NBT.parseNBT(json);
-                            messages.addCompound().mergeCompound(component);
-                        }
-                    } catch (Exception e) {
-                        // 如果解析出错，则使用旧版颜色字符来应用木牌
-                        frontText.removeKey("messages");
-                        ReadWriteNBTList<String> messages = frontText.getStringList("messages");
-                        for (int i = 0; i < signLines.size(); i++) {
-                            String str = signLines.get(i);
-                            String legacyText = str.isEmpty() ? "" : legacy.serialize(miniMessage(str));
-                            messages.set(i, legacyText);
-                        }
-                    }
-                } else {
-                    frontText.removeKey("messages");
-                    ReadWriteNBTList<String> messages = frontText.getStringList("messages");
-                    for (int i = 0; i < signLines.size(); i++) {
-                        messages.set(i, serializeToJSON(i, content, signLines));
-                    }
-                }
-            } else {
-                // 旧版的单面告示牌格式
-                for (int i = 0; i < signLines.size(); i++) {
-                    nbt.setString("Text" + (i + 1), serializeToJSON(i, content, signLines));
-                }
-            }
-        });
+        // 设置涂蜡 (1.20.4+)
+        boolean waxed = content != null;
+        try {
+            sign.setWaxed(waxed);
+        } catch (Throwable t) {
+            sign.setEditable(!waxed);
+        }
+        // 设置木牌内容
+        List<Component> lines = new ArrayList<>();
+        for (int i = 0; i < signLines.size() && i < 4; i++) {
+            lines.add(serializeToComponent(i, content, signLines));
+        }
+        signApi.setLines(sign, lines);
     }
 
-    private static String serializeToJSON(int i, @Nullable String content, List<String> signLines) {
+    private static Component serializeToComponent(int i, @Nullable String content, List<String> signLines) {
         String str = signLines.get(i);
         Component component = str.isEmpty() ? Component.text("") : miniMessage(str);
         if (!supportPersistentData && i == 0 && content != null) {
             // 支持 1.14 以下，通过告示牌第一行的 insertion 储存数据
-            return serializer.serialize(component.insertion("SweetLocks:" + content));
+            return component.insertion("SweetLocks:" + content);
         }
-        return serializer.serialize(component);
+        return component;
     }
 }

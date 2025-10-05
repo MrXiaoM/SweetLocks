@@ -46,7 +46,7 @@ shared.dependencies {
 }
 subprojects {
     dependencies {
-        if (name.startsWith("v")) add("compileOnly", shared)
+        if (!name.equals("shared")) add("compileOnly", shared)
     }
 }
 object NMSSource {

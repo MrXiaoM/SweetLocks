@@ -26,7 +26,7 @@ fun DependencyHandlerScope.library(dependencyNotation: String) {
 }
 configurations.create("shadowLink")
 dependencies {
-    compileOnly("org.spigotmc:spigot-api:1.20-R0.1-SNAPSHOT")
+    compileOnly("org.spigotmc:spigot-api:1.20.4-R0.1-SNAPSHOT")
 
     compileOnly("net.milkbowl.vault:VaultAPI:1.7")
     compileOnly("me.clip:placeholderapi:2.11.6")
@@ -42,7 +42,7 @@ dependencies {
     implementation("top.mrxiaom:LibrariesResolver:1.6.5")
     for (nms in project.project(":nms").subprojects) {
         if (nms.name == "shared") implementation(nms)
-        if (nms.name.startsWith("v")) add("shadowLink", nms)
+        else add("shadowLink", nms)
     }
 }
 java {
