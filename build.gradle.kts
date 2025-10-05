@@ -6,7 +6,7 @@ plugins {
 }
 
 group = "top.mrxiaom.sweet.locks"
-version = "1.0.3"
+version = "1.0.4"
 val targetJavaVersion = 8
 val shadowGroup = "top.mrxiaom.sweet.locks.libs"
 
