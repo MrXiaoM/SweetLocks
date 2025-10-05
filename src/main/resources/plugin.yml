@@ -7,6 +7,8 @@ softdepend:
   - PlaceholderAPI
 folia-supported: true
 authors: [ MrXiaoM ]
+libraries:
+  - "org.jetbrains:annotations:24.0.0"
 commands:
   sweetlocks:
     description: 'The main command of SweetLocks'

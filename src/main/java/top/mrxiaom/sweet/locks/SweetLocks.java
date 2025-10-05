@@ -11,10 +11,14 @@ import top.mrxiaom.pluginbase.economy.EnumEconomy;
 import top.mrxiaom.pluginbase.economy.IEconomy;
 import org.jetbrains.annotations.NotNull;
 import top.mrxiaom.pluginbase.func.LanguageManager;
+import top.mrxiaom.pluginbase.resolver.DefaultLibraryResolver;
+import top.mrxiaom.pluginbase.utils.ClassLoaderWrapper;
 import top.mrxiaom.pluginbase.utils.ConfigUpdater;
 import top.mrxiaom.pluginbase.utils.scheduler.FoliaLibScheduler;
 
 import java.io.File;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,7 +30,7 @@ public class SweetLocks extends BukkitPlugin {
     private final List<String> disableWorlds = new ArrayList<>();
     private final PlatformScheduler platform;
     private ConfigUpdater configUpdater;
-    public SweetLocks() {
+    public SweetLocks() throws Exception {
         super(options()
                 .bungee(false)
                 .adventure(true)
@@ -38,7 +42,29 @@ public class SweetLocks extends BukkitPlugin {
         FoliaLibScheduler scheduler = new FoliaLibScheduler(this);
         this.scheduler = scheduler;
         this.platform = scheduler.getFoliaLib().getScheduler();
+
+        info("正在检查依赖库状态");
+        File librariesDir = ClassLoaderWrapper.isSupportLibraryLoader
+                ? new File("libraries")
+                : new File(this.getDataFolder(), "libraries");
+        DefaultLibraryResolver resolver = new DefaultLibraryResolver(getLogger(), librariesDir);
+
+        resolver.addLibrary(BuildConstants.LIBRARIES);
+
+        List<URL> libraries = resolver.doResolve();
+        info("正在添加 " + libraries.size() + " 个依赖库到类加载器");
+        for (URL library : libraries) {
+            this.classLoader.addURL(library);
+        }
     }
+
+    @Override
+    protected @NotNull ClassLoaderWrapper initClassLoader(URLClassLoader classLoader) {
+        return ClassLoaderWrapper.isSupportLibraryLoader
+                ? new ClassLoaderWrapper(ClassLoaderWrapper.findLibraryLoader(classLoader))
+                : new ClassLoaderWrapper(classLoader);
+    }
+
     @NotNull
     public IEconomy getEconomy() {
         return options.economy();

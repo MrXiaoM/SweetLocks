@@ -1,7 +1,8 @@
 plugins {
     java
     `maven-publish`
-    id ("com.github.johnrengelman.shadow") version "7.0.0"
+    id ("com.gradleup.shadow") version "8.3.0"
+    id ("com.github.gmazzo.buildconfig") version "5.6.7"
 }
 
 group = "top.mrxiaom.sweet.locks"
@@ -18,6 +19,11 @@ repositories {
     maven("https://repo.rosewooddev.io/repository/public/")
 }
 
+val libraries = arrayListOf<String>()
+fun DependencyHandlerScope.library(dependencyNotation: String) {
+    compileOnly(dependencyNotation)
+    libraries.add(dependencyNotation)
+}
 configurations.create("shadowLink")
 dependencies {
     compileOnly("org.spigotmc:spigot-api:1.20-R0.1-SNAPSHOT")
@@ -26,12 +32,14 @@ dependencies {
     compileOnly("me.clip:placeholderapi:2.11.6")
     compileOnly("org.jetbrains:annotations:24.0.0")
 
-    implementation("net.kyori:adventure-api:4.22.0")
-    implementation("net.kyori:adventure-platform-bukkit:4.4.0")
-    implementation("net.kyori:adventure-text-minimessage:4.22.0")
     implementation("de.tr7zw:item-nbt-api:2.15.2-SNAPSHOT")
+    library("net.kyori:adventure-api:4.22.0")
+    library("net.kyori:adventure-platform-bukkit:4.4.0")
+    library("net.kyori:adventure-text-minimessage:4.22.0")
+
     implementation("com.github.technicallycoded:FoliaLib:0.4.4") { isTransitive = false }
-    implementation("top.mrxiaom.pluginbase:library:1.6.3")
+    implementation("top.mrxiaom.pluginbase:library:1.6.5")
+    implementation("top.mrxiaom:LibrariesResolver:1.6.5")
     for (nms in project.project(":nms").subprojects) {
         if (nms.name == "shared") implementation(nms)
         if (nms.name.startsWith("v")) add("shadowLink", nms)
@@ -43,13 +51,22 @@ java {
         toolchain.languageVersion.set(JavaLanguageVersion.of(targetJavaVersion))
     }
 }
+buildConfig {
+    className("BuildConstants")
+    packageName("top.mrxiaom.sweet.locks")
+
+    val librariesVararg = libraries.joinToString(", ") { "\"$it\"" }
+
+    buildConfigField("String", "VERSION", "\"${project.version}\"")
+    buildConfigField("java.time.Instant", "BUILD_TIME", "java.time.Instant.ofEpochSecond(${System.currentTimeMillis() / 1000L}L)")
+    buildConfigField("String[]", "LIBRARIES", "new String[] { $librariesVararg }")
+}
 tasks {
     shadowJar {
         configurations.add(project.configurations.getByName("shadowLink"))
         mapOf(
             "top.mrxiaom.pluginbase" to "base",
             "de.tr7zw.changeme.nbtapi" to "nbtapi",
-            "net.kyori" to "kyori",
             "com.tcoded.folialib" to "folialib",
         ).forEach { (original, target) ->
             relocate(original, "$shadowGroup.$target")
