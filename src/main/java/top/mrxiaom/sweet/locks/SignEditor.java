@@ -3,6 +3,9 @@ package top.mrxiaom.sweet.locks;
 import com.google.common.collect.Lists;
 import com.google.gson.*;
 import de.tr7zw.changeme.nbtapi.NBT;
+import de.tr7zw.changeme.nbtapi.NBTCompound;
+import de.tr7zw.changeme.nbtapi.NBTContainer;
+import de.tr7zw.changeme.nbtapi.NBTTileEntity;
 import de.tr7zw.changeme.nbtapi.iface.ReadWriteNBT;
 import de.tr7zw.changeme.nbtapi.iface.ReadWriteNBTCompoundList;
 import de.tr7zw.changeme.nbtapi.iface.ReadWriteNBTList;
@@ -102,14 +105,8 @@ public class SignEditor {
     }
 
     public static void set(@NotNull Sign sign, @Nullable LockData data, List<String> signLines) {
-        if (data == null) {
-            setRaw(sign, null, signLines);
-            return;
-        }
-        String json = data.saveToJson();
-        if (setRaw(sign, json, signLines)) {
-            update(sign.getBlock());
-        }
+        String json = data == null ? null : data.saveToJson();
+        setRaw(sign, json, signLines);
     }
 
     private static @Nullable String getRaw(@NotNull Sign sign) {
@@ -136,16 +133,7 @@ public class SignEditor {
     }
 
     @SuppressWarnings({"deprecation"})
-    private static boolean setRaw(@NotNull Sign sign, @Nullable String content, List<String> signLines) {
-        if (supportPersistentData) {
-            NBT.modifyPersistentData(sign, nbt -> {
-                if (content == null) {
-                    nbt.removeKey("SweetLocks");
-                } else {
-                    nbt.setString("SweetLocks", content);
-                }
-            });
-        }
+    private static void setRaw(@NotNull Sign sign, @Nullable String content, List<String> signLines) {
         // 设置涂蜡 (1.20.4+)
         boolean waxed = content != null;
         try {
@@ -158,7 +146,19 @@ public class SignEditor {
         for (int i = 0; i < signLines.size() && i < 4; i++) {
             lines.add(serializeToComponent(i, content, signLines));
         }
-        return signApi.setLines(sign, lines);
+        if (signApi.setLines(sign, lines)) {
+            update(sign.getBlock());
+        }
+        // 设置方块数据
+        if (supportPersistentData) {
+            NBT.modifyPersistentData(sign, nbt -> {
+                if (content == null) {
+                    nbt.removeKey("SweetLocks");
+                } else {
+                    nbt.setString("SweetLocks", content);
+                }
+            });
+        }
     }
 
     private static Component serializeToComponent(int i, @Nullable String content, List<String> signLines) {
