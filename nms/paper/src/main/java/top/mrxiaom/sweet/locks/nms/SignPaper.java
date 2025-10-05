@@ -15,5 +15,6 @@ public class SignPaper implements ISign {
         for (int i = 0; i < lines.size() && i < 4; i++) {
             sign.line(i, lines.get(i));
         }
+        sign.update();
     }
 }
