@@ -11,6 +11,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.jetbrains.annotations.Nullable;
 import top.mrxiaom.pluginbase.func.AutoRegister;
+import top.mrxiaom.pluginbase.utils.CollectionUtils;
+import top.mrxiaom.pluginbase.utils.ConfigUtils;
 import top.mrxiaom.pluginbase.utils.ListPair;
 import top.mrxiaom.pluginbase.utils.Util;
 import top.mrxiaom.sweet.locks.Messages;
@@ -77,7 +79,7 @@ public class OwnerNoticeManager extends AbstractModule implements Listener {
         if (section != null) for (String key : section.getKeys(false)) {
             UUID ownerUUID = UUID.fromString(key);
             List<Notice> notices = new ArrayList<>();
-            List<ConfigurationSection> list = Util.getSectionList(section, key);
+            List<ConfigurationSection> list = ConfigUtils.getSectionList(section, key);
             for (ConfigurationSection entry : list) {
                 String playerName = entry.getString("player-name");
                 String world = entry.getString("world");
@@ -131,7 +133,7 @@ public class OwnerNoticeManager extends AbstractModule implements Listener {
         if (p != null) {
             notice(p, player.getName(), world, x, y, z, money, tax);
         } else {
-            List<Notice> list = Util.getOrPut(noticeMap, owner.getUniqueId(), () -> new ArrayList<>());
+            List<Notice> list = CollectionUtils.getOrPut(noticeMap, owner.getUniqueId(), () -> new ArrayList<>());
             list.add(new Notice(player.getName(), world, x, y, z, money, tax));
             save();
         }

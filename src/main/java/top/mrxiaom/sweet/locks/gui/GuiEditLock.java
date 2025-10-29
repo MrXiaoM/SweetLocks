@@ -23,6 +23,7 @@ import top.mrxiaom.pluginbase.func.gui.IModifier;
 import top.mrxiaom.pluginbase.func.gui.LoadedIcon;
 import top.mrxiaom.pluginbase.gui.IGuiHolder;
 import top.mrxiaom.pluginbase.utils.*;
+import top.mrxiaom.pluginbase.utils.depend.PAPI;
 import top.mrxiaom.sweet.locks.Messages;
 import top.mrxiaom.sweet.locks.SweetLocks;
 import top.mrxiaom.sweet.locks.data.LockData;
@@ -191,8 +192,7 @@ public class GuiEditLock extends AbstractGuiModule {
 
         @Override
         protected Inventory create(int size, String title) {
-            String parsedTitle = ColorHelper.parseColor(PAPI.setPlaceholders(player, title));
-            return super.create(size, parsedTitle);
+            return super.create(size, PAPI.setPlaceholders(player, title));
         }
 
         @Override

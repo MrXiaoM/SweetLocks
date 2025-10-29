@@ -5,9 +5,17 @@ plugins {
     id ("com.github.gmazzo.buildconfig") version "5.6.7"
 }
 
+buildscript {
+    repositories.mavenCentral()
+    dependencies.classpath("top.mrxiaom:LibrariesResolver-Gradle:1.7.0")
+}
+val base = top.mrxiaom.gradle.LibraryHelper(project)
+
 group = "top.mrxiaom.sweet.locks"
 version = "1.0.4"
 val targetJavaVersion = 8
+val pluginBaseModules = listOf("library", "paper", "actions", "gui", "l10n", "misc")
+val pluginBaseVersion = "1.7.0"
 val shadowGroup = "top.mrxiaom.sweet.locks.libs"
 
 repositories {
@@ -19,11 +27,6 @@ repositories {
     maven("https://repo.rosewooddev.io/repository/public/")
 }
 
-val libraries = arrayListOf<String>()
-fun DependencyHandlerScope.library(dependencyNotation: String) {
-    compileOnly(dependencyNotation)
-    libraries.add(dependencyNotation)
-}
 configurations.create("shadowLink")
 dependencies {
     compileOnly("org.spigotmc:spigot-api:1.20.4-R0.1-SNAPSHOT")
@@ -32,14 +35,17 @@ dependencies {
     compileOnly("me.clip:placeholderapi:2.11.6")
     compileOnly("org.jetbrains:annotations:24.0.0")
 
-    library("net.kyori:adventure-api:4.22.0")
-    library("net.kyori:adventure-platform-bukkit:4.4.0")
-    library("net.kyori:adventure-text-minimessage:4.22.0")
+    base.library("net.kyori:adventure-api:4.22.0")
+    base.library("net.kyori:adventure-platform-bukkit:4.4.0")
+    base.library("net.kyori:adventure-text-minimessage:4.22.0")
+    base.library("net.kyori:adventure-text-serializer-plain:4.22.0")
 
-    implementation("de.tr7zw:item-nbt-api:2.15.3-SNAPSHOT")
+    implementation("de.tr7zw:item-nbt-api:2.15.3")
     implementation("com.github.technicallycoded:FoliaLib:0.4.4") { isTransitive = false }
-    implementation("top.mrxiaom.pluginbase:library:1.6.5")
-    implementation("top.mrxiaom:LibrariesResolver:1.6.5")
+    for (artifact in pluginBaseModules) {
+        implementation("top.mrxiaom.pluginbase:$artifact:$pluginBaseVersion")
+    }
+    implementation("top.mrxiaom:LibrariesResolver-Lite:$pluginBaseVersion")
     for (nms in project.project(":nms").subprojects) {
         if (nms.name == "shared") implementation(nms)
         else add("shadowLink", nms)
@@ -55,11 +61,10 @@ buildConfig {
     className("BuildConstants")
     packageName("top.mrxiaom.sweet.locks")
 
-    val librariesVararg = libraries.joinToString(", ") { "\"$it\"" }
-
+    base.doResolveLibraries()
     buildConfigField("String", "VERSION", "\"${project.version}\"")
     buildConfigField("java.time.Instant", "BUILD_TIME", "java.time.Instant.ofEpochSecond(${System.currentTimeMillis() / 1000L}L)")
-    buildConfigField("String[]", "LIBRARIES", "new String[] { $librariesVararg }")
+    buildConfigField("String[]", "RESOLVED_LIBRARIES", base.join())
 }
 tasks {
     shadowJar {
