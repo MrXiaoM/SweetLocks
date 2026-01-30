@@ -7,15 +7,14 @@ plugins {
 
 buildscript {
     repositories.mavenCentral()
-    dependencies.classpath("top.mrxiaom:LibrariesResolver-Gradle:1.7.0")
+    dependencies.classpath("top.mrxiaom:LibrariesResolver-Gradle:1.7.4")
 }
 val base = top.mrxiaom.gradle.LibraryHelper(project)
 
 group = "top.mrxiaom.sweet.locks"
 version = "1.0.4"
 val targetJavaVersion = 8
-val pluginBaseModules = listOf("library", "paper", "actions", "gui", "l10n", "misc")
-val pluginBaseVersion = "1.7.0"
+val pluginBaseModules = base.modules.run{ listOf(library, paper, actions, gui, l10n, misc) }
 val shadowGroup = "top.mrxiaom.sweet.locks.libs"
 
 repositories {
@@ -43,9 +42,9 @@ dependencies {
     implementation("de.tr7zw:item-nbt-api:2.15.3")
     implementation("com.github.technicallycoded:FoliaLib:0.4.4") { isTransitive = false }
     for (artifact in pluginBaseModules) {
-        implementation("top.mrxiaom.pluginbase:$artifact:$pluginBaseVersion")
+        implementation(artifact)
     }
-    implementation("top.mrxiaom:LibrariesResolver-Lite:$pluginBaseVersion")
+    implementation(base.resolver.lite)
     for (nms in project.project(":nms").subprojects) {
         if (nms.name == "shared") implementation(nms)
         else add("shadowLink", nms)
