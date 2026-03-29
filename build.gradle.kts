@@ -12,7 +12,7 @@ buildscript {
 val base = top.mrxiaom.gradle.LibraryHelper(project)
 
 group = "top.mrxiaom.sweet.locks"
-version = "1.0.5"
+version = "1.0.6"
 val targetJavaVersion = 8
 val pluginBaseModules = base.modules.run{ listOf(library, paper, actions, gui, l10n, misc) }
 val shadowGroup = "top.mrxiaom.sweet.locks.libs"
