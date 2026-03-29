@@ -1,13 +1,13 @@
 plugins {
     java
     `maven-publish`
-    id ("com.gradleup.shadow") version "8.3.0"
+    id ("com.gradleup.shadow") version "9.3.0"
     id ("com.github.gmazzo.buildconfig") version "5.6.7"
 }
 
 buildscript {
     repositories.mavenCentral()
-    dependencies.classpath("top.mrxiaom:LibrariesResolver-Gradle:1.7.5")
+    dependencies.classpath("top.mrxiaom:LibrariesResolver-Gradle:1.7.13")
 }
 val base = top.mrxiaom.gradle.LibraryHelper(project)
 
@@ -39,7 +39,7 @@ dependencies {
     base.library("net.kyori:adventure-text-minimessage:4.22.0")
     base.library("net.kyori:adventure-text-serializer-plain:4.22.0")
 
-    implementation("de.tr7zw:item-nbt-api:2.15.5")
+    implementation("de.tr7zw:item-nbt-api:2.15.6")
     implementation("com.github.technicallycoded:FoliaLib:0.4.4") { isTransitive = false }
     for (artifact in pluginBaseModules) {
         implementation(artifact)
@@ -55,6 +55,8 @@ java {
     if (JavaVersion.current() < javaVersion) {
         toolchain.languageVersion.set(JavaLanguageVersion.of(targetJavaVersion))
     }
+    withSourcesJar()
+    withJavadocJar()
 }
 buildConfig {
     className("BuildConstants")
@@ -67,6 +69,7 @@ buildConfig {
 }
 tasks {
     shadowJar {
+        configurations.add(project.configurations.runtimeClasspath.get())
         configurations.add(project.configurations.getByName("shadowLink"))
         mapOf(
             "top.mrxiaom.pluginbase" to "base",
@@ -76,7 +79,7 @@ tasks {
             relocate(original, "$shadowGroup.$target")
         }
     }
-    val copyTask = create<Copy>("copyBuildArtifact") {
+    val copyTask = this.register<Copy>("copyBuildArtifact") {
         dependsOn(shadowJar)
         from(shadowJar.get().outputs)
         rename { "${project.name}-$version.jar" }
@@ -94,18 +97,35 @@ tasks {
     processResources {
         duplicatesStrategy = DuplicatesStrategy.INCLUDE
         from(sourceSets.main.get().resources.srcDirs) {
-            expand(mapOf("version" to version))
+            expand(mapOf(
+                "version" to version,
+                "libraries" to base.addedLibraries.joinToString("\"\n  - \""),
+            ))
             include("plugin.yml")
+        }
+    }
+    javadoc {
+        (options as StandardJavadocDocletOptions).apply {
+            links("https://hub.spigotmc.org/javadocs/spigot/")
+
+            locale("zh_CN")
+            encoding("UTF-8")
+            docEncoding("UTF-8")
+            addBooleanOption("keywords", true)
+            addBooleanOption("Xdoclint:none", true)
         }
     }
 }
 publishing {
     publications {
         create<MavenPublication>("maven") {
-            from(components.getByName("java"))
             groupId = project.group.toString()
             artifactId = rootProject.name
             version = project.version.toString()
+
+            artifact(tasks["shadowJar"]).classifier = null
+            artifact(tasks["sourcesJar"])
+            artifact(tasks["javadocJar"])
         }
     }
 }
