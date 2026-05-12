@@ -15,17 +15,13 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 public class SignNBT implements ISign {
-    private boolean useNbtAsTextComponent;
-    private boolean supportPersistentData;
-    private boolean supportSignSide;
-    private boolean supportBlockData;
-    private static @NotNull GsonComponentSerializer serializer = BukkitComponentSerializer.gson();
-    private static @NotNull LegacyComponentSerializer legacy = BukkitComponentSerializer.legacy();
+    private final boolean useNbtAsTextComponent;
+    private final boolean supportSignSide;
+    private static final @NotNull GsonComponentSerializer serializer = BukkitComponentSerializer.gson();
+    private static final @NotNull LegacyComponentSerializer legacy = BukkitComponentSerializer.legacy();
     public SignNBT() {
         useNbtAsTextComponent = MinecraftVersion.isAtLeastVersion(MinecraftVersion.MC1_21_R4);
-        supportPersistentData = isPresent("org.bukkit.persistence.PersistentDataContainer");
         supportSignSide = isPresent("org.bukkit.block.sign.SignSide");
-        supportBlockData = isPresent("org.bukkit.block.data.BlockData");
     }
 
     public static boolean isPresent(String className) {
@@ -48,8 +44,8 @@ public class SignNBT implements ISign {
                         // 1.21.5+ 文本组件改用 NBT 而非 JSON 字符串
                         frontText.removeKey("messages");
                         ReadWriteNBTCompoundList messages = frontText.getCompoundList("messages");
-                        for (int i = 0; i < lines.size(); i++) {
-                            String json = serializer.serialize(lines.get(i));
+                        for (Component line : lines) {
+                            String json = serializer.serialize(line);
                             ReadWriteNBT component = NBT.parseNBT(json);
                             messages.addCompound().mergeCompound(component);
                         }

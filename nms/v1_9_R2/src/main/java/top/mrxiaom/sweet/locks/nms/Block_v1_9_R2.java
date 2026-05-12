@@ -6,7 +6,6 @@ import net.minecraft.server.v1_9_R2.TileEntity;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.craftbukkit.v1_9_R2.CraftWorld;
-import org.bukkit.craftbukkit.v1_9_R2.block.CraftBlock;
 import org.bukkit.craftbukkit.v1_9_R2.util.CraftMagicNumbers;
 
 public class Block_v1_9_R2 implements IBlock {

@@ -166,10 +166,8 @@ public class GuiEditLock extends AbstractGuiModule {
          * 主要图标锁，以免在运行定时器时再次点击图标
          */
         private boolean clicked = false;
-        private Group group;
         protected Impl(Player player, LockData data) {
             super(player, guiTitle, guiInventory);
-            this.group = GroupManager.inst().getGroup(player);
             this.data = data;
         }
 
@@ -209,8 +207,9 @@ public class GuiEditLock extends AbstractGuiModule {
                 promptEdit(iconPrice, message -> {
                     Double price = Util.parseDouble(message).orElse(null);
                     if (price != null) {
+                        Group group = GroupManager.inst().getGroup(player);
                         Double priceMin = group.getPriceMin();
-                        Double priceMax = group.getPriceMax();;
+                        Double priceMax = group.getPriceMax();
                         if (priceMin != null && price < priceMin) {
                             Messages.price__min_limited.tm(player, Pair.of("%money%", priceMin));
                         } else if (priceMax != null && price > priceMax) {
@@ -230,6 +229,7 @@ public class GuiEditLock extends AbstractGuiModule {
                 promptEdit(iconReachEnter, message -> {
                     Integer reach = Util.parseInt(message).orElse(null);
                     if (reach != null) {
+                        Group group = GroupManager.inst().getGroup(player);
                         int reachEnterMin = group.getReachEnterMin();
                         int reachEnterMax = group.getReachEnterMax();
                         if (reach < reachEnterMin) {
@@ -251,6 +251,7 @@ public class GuiEditLock extends AbstractGuiModule {
                 promptEdit(iconReachLeave, message -> {
                     Integer reach = Util.parseInt(message).orElse(null);
                     if (reach != null) {
+                        Group group = GroupManager.inst().getGroup(player);
                         int reachLeaveMin = group.getReachLeaveMin();
                         int reachLeaveMax = group.getReachLeaveMax();
                         if (reach < reachLeaveMin) {
@@ -302,10 +303,10 @@ public class GuiEditLock extends AbstractGuiModule {
                     plugin.getPlatform().runAtLocation(data.getLocation(), t -> {
                         SignLinesFormatter formatter = SignLinesFormatter.inst();
                         data.save(formatter.generateLockSignLines(data));
-                        plugin.getScheduler().runTask(() -> open());
+                        plugin.getScheduler().runTask(this::open);
                     });
                 } else {
-                    plugin.getScheduler().runTask(() -> open());
+                    plugin.getScheduler().runTask(this::open);
                 }
             });
         }

@@ -86,8 +86,8 @@ public class InteractDoorListener extends AbstractModule implements Listener {
 
     private boolean isOffHand(PlayerInteractEvent e) {
         try {
-            return e.getHand().equals(EquipmentSlot.OFF_HAND);
-        } catch (Throwable t) {
+            return EquipmentSlot.OFF_HAND.equals(e.getHand());
+        } catch (LinkageError t) {
             return false;
         }
     }
@@ -104,10 +104,11 @@ public class InteractDoorListener extends AbstractModule implements Listener {
         // 右键点击铁门
         if (isDoorBlock(block)) {
             Boolean bottomHalf = isBottomHalfDoor(block);
-            Block bottomBlock = bottomHalf == false // 获取门的下部分方块，如果方块不是门，则获取方块本身
+            if (bottomHalf == null) return;
+            Block bottomBlock = !bottomHalf // 获取门的下部分方块，如果方块不是门，则获取方块本身
                     ? block.getRelative(BlockFace.DOWN)
                     : block;
-            Block baseBlock = bottomHalf == true // 获取门上面承载告示牌的方块
+            Block baseBlock = bottomHalf // 获取门上面承载告示牌的方块
                     ? block.getRelative(0, 2, 0)
                     : block.getRelative(0, 1, 0);
             // 通过点击方向的两侧寻找收费门告示牌
@@ -298,10 +299,7 @@ public class InteractDoorListener extends AbstractModule implements Listener {
         }
         BlockState b2 = baseBlock.getRelative(clickFace.getOppositeFace()).getState();
         if (b2 instanceof Sign) {
-            LockData data = SignEditor.get((Sign) b2);
-            if (data != null) {
-                return data;
-            }
+            return SignEditor.get((Sign) b2);
         }
         return null;
     }

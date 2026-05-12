@@ -1,7 +1,5 @@
 package top.mrxiaom.sweet.locks;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import de.tr7zw.changeme.nbtapi.NBT;
 import de.tr7zw.changeme.nbtapi.utils.MinecraftVersion;
 import net.kyori.adventure.platform.bukkit.BukkitComponentSerializer;
@@ -25,7 +23,6 @@ import java.util.List;
 import static top.mrxiaom.pluginbase.utils.AdventureUtil.miniMessage;
 
 public class SignEditor {
-    private static Gson gson = new GsonBuilder().create();
     private static boolean supportPersistentData;
     private static boolean supportBlockData;
     private static ISign signApi;
@@ -36,8 +33,7 @@ public class SignEditor {
         supportPersistentData = Util.isPresent("org.bukkit.persistence.PersistentDataContainer");
         supportBlockData = Util.isPresent("org.bukkit.block.data.BlockData");
         try {
-            ISign paper = (ISign) Class.forName("top.mrxiaom.sweet.locks.nms.SignPaper").getConstructor().newInstance();
-            signApi = paper;
+            signApi = (ISign) Class.forName("top.mrxiaom.sweet.locks.nms.SignPaper").getConstructor().newInstance();
         } catch (Throwable ignored) {
             signApi = new SignNBT();
         }

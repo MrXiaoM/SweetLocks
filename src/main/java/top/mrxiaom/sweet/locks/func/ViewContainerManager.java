@@ -35,7 +35,7 @@ import static top.mrxiaom.pluginbase.utils.ColorHelper.parseColor;
 
 @AutoRegister
 public class ViewContainerManager extends AbstractModule implements Listener {
-    public static String FLAG_PREVIEW = "SWEETLOCKS_PREVIEW";
+    public static final String FLAG_PREVIEW = "SWEETLOCKS_PREVIEW";
     public static class Holder implements InventoryHolder {
         private final Player viewer;
         private final Inventory inventory;
@@ -57,6 +57,10 @@ public class ViewContainerManager extends AbstractModule implements Listener {
                 }
             }
             this.inventory.setContents(copy);
+        }
+
+        public Player viewer() {
+            return viewer;
         }
 
         @NotNull
@@ -94,7 +98,7 @@ public class ViewContainerManager extends AbstractModule implements Listener {
     }
 
     public boolean checkView(String[] lines) {
-        if (viewSign.isEmpty()) return false;
+        if (viewSign == null || viewSign.isEmpty()) return false;
         for (String line : lines) {
             if (line != null && line.contains(viewSign)) {
                 return true;
@@ -115,7 +119,7 @@ public class ViewContainerManager extends AbstractModule implements Listener {
     @SuppressWarnings({"deprecation"})
     @EventHandler(priority = EventPriority.LOWEST)
     public void onInteract(PlayerInteractEvent e) {
-        if (viewSign.isEmpty() || e.useInteractedBlock().equals(Event.Result.DENY)) return;
+        if (viewSign == null || viewSign.isEmpty() || e.useInteractedBlock().equals(Event.Result.DENY)) return;
         Player player = e.getPlayer();
         Block block = e.getClickedBlock();
         if (block == null) return;

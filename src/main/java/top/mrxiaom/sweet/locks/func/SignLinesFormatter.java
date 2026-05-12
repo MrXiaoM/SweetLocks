@@ -23,7 +23,7 @@ public class SignLinesFormatter extends AbstractModule {
     private String moneyFormat;
     private String moneyReplaceEmpty;
     private List<String> flagsOrder;
-    private Map<String, FlagDisplay> flagsDisplay = new HashMap<>();
+    private final Map<String, FlagDisplay> flagsDisplay = new HashMap<>();
     public SignLinesFormatter(SweetLocks plugin) {
         super(plugin);
     }
