@@ -1,13 +1,10 @@
 package top.mrxiaom.sweet.locks.gui.edit;
 
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 import top.mrxiaom.pluginbase.func.gui.IModifier;
 import top.mrxiaom.pluginbase.func.gui.LoadedIcon;
-import top.mrxiaom.pluginbase.utils.ItemStackUtil;
-import top.mrxiaom.pluginbase.utils.Pair;
 import top.mrxiaom.sweet.locks.gui.GuiEditLock;
 
 import java.util.List;

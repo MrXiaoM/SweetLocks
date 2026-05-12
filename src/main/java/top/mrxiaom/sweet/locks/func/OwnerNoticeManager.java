@@ -14,7 +14,6 @@ import top.mrxiaom.pluginbase.func.AutoRegister;
 import top.mrxiaom.pluginbase.utils.CollectionUtils;
 import top.mrxiaom.pluginbase.utils.ConfigUtils;
 import top.mrxiaom.pluginbase.utils.ListPair;
-import top.mrxiaom.pluginbase.utils.Util;
 import top.mrxiaom.sweet.locks.Messages;
 import top.mrxiaom.sweet.locks.SweetLocks;
 

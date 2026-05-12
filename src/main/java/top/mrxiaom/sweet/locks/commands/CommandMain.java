@@ -1,5 +1,5 @@
 package top.mrxiaom.sweet.locks.commands;
-        
+
 import com.google.common.collect.Lists;
 import de.tr7zw.changeme.nbtapi.NBT;
 import org.bukkit.block.Block;
@@ -18,7 +18,10 @@ import top.mrxiaom.sweet.locks.Messages;
 import top.mrxiaom.sweet.locks.SweetLocks;
 import top.mrxiaom.sweet.locks.func.AbstractModule;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 @AutoRegister
 public class CommandMain extends AbstractModule implements CommandExecutor, TabCompleter {

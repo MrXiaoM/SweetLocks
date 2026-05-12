@@ -1,6 +1,5 @@
 package top.mrxiaom.sweet.locks;
 
-import top.mrxiaom.pluginbase.func.language.AbstractLanguageHolder;
 import top.mrxiaom.pluginbase.func.language.IHolderAccessor;
 import top.mrxiaom.pluginbase.func.language.LanguageEnumAutoHolder;
 

@@ -1,6 +1,5 @@
 package top.mrxiaom.sweet.locks.data;
 
-import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;

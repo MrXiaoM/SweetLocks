@@ -1,26 +1,15 @@
 package top.mrxiaom.sweet.locks;
 
-import com.google.common.collect.Lists;
-import com.google.gson.*;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import de.tr7zw.changeme.nbtapi.NBT;
-import de.tr7zw.changeme.nbtapi.NBTCompound;
-import de.tr7zw.changeme.nbtapi.NBTContainer;
-import de.tr7zw.changeme.nbtapi.NBTTileEntity;
-import de.tr7zw.changeme.nbtapi.iface.ReadWriteNBT;
-import de.tr7zw.changeme.nbtapi.iface.ReadWriteNBTCompoundList;
-import de.tr7zw.changeme.nbtapi.iface.ReadWriteNBTList;
 import de.tr7zw.changeme.nbtapi.utils.MinecraftVersion;
 import net.kyori.adventure.platform.bukkit.BukkitComponentSerializer;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.event.ClickEvent;
-import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
-import org.bukkit.block.sign.SignSide;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import top.mrxiaom.pluginbase.utils.Util;
@@ -30,9 +19,7 @@ import top.mrxiaom.sweet.locks.nms.IBlock;
 import top.mrxiaom.sweet.locks.nms.ISign;
 import top.mrxiaom.sweet.locks.nms.SignNBT;
 
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.List;
 
 import static top.mrxiaom.pluginbase.utils.AdventureUtil.miniMessage;
@@ -42,7 +29,7 @@ public class SignEditor {
     private static boolean supportPersistentData;
     private static boolean supportBlockData;
     private static ISign signApi;
-    private static @NotNull GsonComponentSerializer serializer = BukkitComponentSerializer.gson();
+    private static final @NotNull GsonComponentSerializer serializer = BukkitComponentSerializer.gson();
     private static IBlock blockNMS;
 
     protected static void init() {

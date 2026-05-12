@@ -1,3 +1,5 @@
+import top.mrxiaom.gradle.LibraryHelper
+
 plugins {
     java
     `maven-publish`
@@ -7,9 +9,9 @@ plugins {
 
 buildscript {
     repositories.mavenCentral()
-    dependencies.classpath("top.mrxiaom:LibrariesResolver-Gradle:1.7.13")
+    dependencies.classpath("top.mrxiaom:LibrariesResolver-Gradle:1.7.20")
 }
-val base = top.mrxiaom.gradle.LibraryHelper(project)
+val base = LibraryHelper(project)
 
 group = "top.mrxiaom.sweet.locks"
 version = "1.0.6"
@@ -29,17 +31,15 @@ repositories {
 configurations.create("shadowLink")
 dependencies {
     compileOnly("org.spigotmc:spigot-api:1.20.4-R0.1-SNAPSHOT")
+    compileOnly(base.depend.annotations)
 
     compileOnly("net.milkbowl.vault:VaultAPI:1.7")
-    compileOnly("me.clip:placeholderapi:2.11.6")
-    compileOnly("org.jetbrains:annotations:24.0.0")
+    compileOnly("me.clip:placeholderapi:2.12.2")
 
-    base.library("net.kyori:adventure-api:4.22.0")
-    base.library("net.kyori:adventure-platform-bukkit:4.4.0")
-    base.library("net.kyori:adventure-text-minimessage:4.22.0")
-    base.library("net.kyori:adventure-text-serializer-plain:4.22.0")
+    base.library(LibraryHelper.adventure("4.22.0"))
+    base.library(LibraryHelper.adventure("4.4.0", listOf("platform-bukkit")))
 
-    implementation("de.tr7zw:item-nbt-api:2.15.6")
+    implementation(base.depend.nbtapi)
     implementation("com.github.technicallycoded:FoliaLib:0.4.4") { isTransitive = false }
     for (artifact in pluginBaseModules) {
         implementation(artifact)
@@ -50,14 +50,10 @@ dependencies {
         else add("shadowLink", nms)
     }
 }
-java {
-    val javaVersion = JavaVersion.toVersion(targetJavaVersion)
-    if (JavaVersion.current() < javaVersion) {
-        toolchain.languageVersion.set(JavaLanguageVersion.of(targetJavaVersion))
-    }
-    withSourcesJar()
-    withJavadocJar()
-}
+
+LibraryHelper.initJava(project, base, targetJavaVersion, true)
+LibraryHelper.initPublishing(project)
+
 buildConfig {
     className("BuildConstants")
     packageName("top.mrxiaom.sweet.locks")
@@ -77,55 +73,6 @@ tasks {
             "com.tcoded.folialib" to "folialib",
         ).forEach { (original, target) ->
             relocate(original, "$shadowGroup.$target")
-        }
-    }
-    val copyTask = this.register<Copy>("copyBuildArtifact") {
-        dependsOn(shadowJar)
-        from(shadowJar.get().outputs)
-        rename { "${project.name}-$version.jar" }
-        into(rootProject.file("out"))
-    }
-    build {
-        dependsOn(copyTask)
-    }
-    withType<JavaCompile>().configureEach {
-        options.encoding = "UTF-8"
-        if (targetJavaVersion >= 10 || JavaVersion.current().isJava10Compatible) {
-            options.release.set(targetJavaVersion)
-        }
-    }
-    processResources {
-        duplicatesStrategy = DuplicatesStrategy.INCLUDE
-        from(sourceSets.main.get().resources.srcDirs) {
-            expand(mapOf(
-                "version" to version,
-                "libraries" to base.addedLibraries.joinToString("\"\n  - \""),
-            ))
-            include("plugin.yml")
-        }
-    }
-    javadoc {
-        (options as StandardJavadocDocletOptions).apply {
-            links("https://hub.spigotmc.org/javadocs/spigot/")
-
-            locale("zh_CN")
-            encoding("UTF-8")
-            docEncoding("UTF-8")
-            addBooleanOption("keywords", true)
-            addBooleanOption("Xdoclint:none", true)
-        }
-    }
-}
-publishing {
-    publications {
-        create<MavenPublication>("maven") {
-            groupId = project.group.toString()
-            artifactId = rootProject.name
-            version = project.version.toString()
-
-            artifact(tasks["shadowJar"]).classifier = null
-            artifact(tasks["sourcesJar"])
-            artifact(tasks["javadocJar"])
         }
     }
 }

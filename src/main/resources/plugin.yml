@@ -7,8 +7,7 @@ softdepend:
   - PlaceholderAPI
 folia-supported: true
 authors: [ MrXiaoM ]
-libraries:
-  - "${libraries}"
+# PluginBase Libraries ${libraries_config}
 commands:
   sweetlocks:
     description: 'The main command of SweetLocks'

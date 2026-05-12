@@ -20,8 +20,6 @@ import top.mrxiaom.sweet.locks.data.LockData;
 import top.mrxiaom.sweet.locks.func.entry.Group;
 import top.mrxiaom.sweet.locks.gui.GuiEditLock;
 
-import java.util.List;
-
 @AutoRegister
 public class LocksCreateListener extends AbstractModule implements Listener {
     private String createSignLine;

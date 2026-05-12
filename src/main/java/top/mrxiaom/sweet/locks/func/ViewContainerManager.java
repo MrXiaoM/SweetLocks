@@ -28,9 +28,7 @@ import top.mrxiaom.sweet.locks.SignEditor;
 import top.mrxiaom.sweet.locks.SweetLocks;
 import top.mrxiaom.sweet.locks.func.entry.ClickAction;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import static top.mrxiaom.pluginbase.utils.ColorHelper.parseColor;
