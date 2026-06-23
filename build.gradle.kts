@@ -9,7 +9,7 @@ plugins {
 
 buildscript {
     repositories.mavenCentral()
-    dependencies.classpath("top.mrxiaom:LibrariesResolver-Gradle:1.7.20")
+    dependencies.classpath("top.mrxiaom:LibrariesResolver-Gradle:1.7.27")
 }
 val base = LibraryHelper(project)
 
@@ -36,8 +36,7 @@ dependencies {
     compileOnly("net.milkbowl.vault:VaultAPI:1.7")
     compileOnly("me.clip:placeholderapi:2.12.2")
 
-    base.library(LibraryHelper.adventure("4.22.0"))
-    base.library(LibraryHelper.adventure("4.4.0", listOf("platform-bukkit")))
+    base.library(LibraryHelper.adventure("4.25.0"))
 
     implementation(base.depend.nbtapi)
     implementation("com.github.technicallycoded:FoliaLib:0.4.4") { isTransitive = false }
