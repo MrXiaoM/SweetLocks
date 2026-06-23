@@ -3,6 +3,7 @@ package top.mrxiaom.sweet.locks;
 import de.tr7zw.changeme.nbtapi.NBT;
 import de.tr7zw.changeme.nbtapi.utils.MinecraftVersion;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.platform.bukkit.BukkitComponentSerializer;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -25,7 +26,7 @@ public class SignEditor {
     private static boolean supportPersistentData;
     private static boolean supportBlockData;
     private static ISign signApi;
-    private static final @NotNull GsonComponentSerializer serializer = GsonComponentSerializer.gson();
+    private static final @NotNull GsonComponentSerializer serializer = BukkitComponentSerializer.gson();
     private static IBlock blockNMS;
 
     protected static void init() {

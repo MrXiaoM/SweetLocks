@@ -37,6 +37,7 @@ dependencies {
     compileOnly("me.clip:placeholderapi:2.12.2")
 
     base.library(LibraryHelper.adventure("4.25.0"))
+    base.library(LibraryHelper.adventure("4.4.0", listOf("platform-bukkit")))
 
     implementation(base.depend.nbtapi)
     implementation("com.github.technicallycoded:FoliaLib:0.4.4") { isTransitive = false }
