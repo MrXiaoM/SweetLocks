@@ -292,7 +292,7 @@ public class GuiEditLock extends AbstractGuiModule {
 
         private void promptEdit(PromptIcon icon, Function<String, Boolean> func) {
             clicked = true;
-            player.closeInventory();
+            plugin.getScheduler().closeInventory(player);
             AdventureUtil.sendMessage(player, icon.promptTips);
             Prompter.onChat(plugin, player, message -> {
                 boolean save = false;

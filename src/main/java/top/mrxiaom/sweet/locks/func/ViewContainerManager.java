@@ -173,18 +173,4 @@ public class ViewContainerManager extends AbstractModule implements Listener {
             e.setCancelled(true);
         }
     }
-
-    @Override
-    public void onDisable() {
-        for (Player player : Bukkit.getOnlinePlayers()) {
-            try {
-                Inventory inv = player.getOpenInventory().getTopInventory();
-                if (inv.getHolder() instanceof Holder) {
-                    player.closeInventory();
-                }
-            } catch (Throwable ignored) {
-                // folia 调用 getHolder() 时，如果玩家正打开原版界面，那么就会因为没有使用正确的调度器而报错
-            }
-        }
-    }
 }
