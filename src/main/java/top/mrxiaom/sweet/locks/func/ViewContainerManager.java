@@ -151,7 +151,7 @@ public class ViewContainerManager extends AbstractModule implements Listener {
                 if (viewTypes.contains(inv.getType())) {
                     e.setCancelled(true);
                     Holder holder = new Holder(player, inv);
-                    player.openInventory(holder.getInventory());
+                    plugin.getScheduler().openInventory(player, holder.getInventory());
                 }
             }
         }
