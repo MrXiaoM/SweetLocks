@@ -18,6 +18,7 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
+import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -171,6 +172,24 @@ public class ViewContainerManager extends AbstractModule implements Listener {
         InventoryHolder holder = e.getView().getTopInventory().getHolder();
         if (holder instanceof Holder) {
             e.setCancelled(true);
+        }
+    }
+
+    @Override
+    public void onDisable() {
+        boolean canRunScheduler = true;
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            InventoryView view = player.getOpenInventory();
+            InventoryHolder holder = Util.getHolder(view.getTopInventory());
+            if (holder instanceof Holder) {
+                if (canRunScheduler) {
+                    try {
+                        plugin.getScheduler().closeInventory(player);
+                    } catch (Throwable ignored) {
+                        canRunScheduler = false;
+                    }
+                }
+            }
         }
     }
 }
