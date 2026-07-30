@@ -182,7 +182,7 @@ public class GuiEditLock extends AbstractGuiModule {
         }
 
         @Override
-        public void updateInventory(InventoryView view) {
+        public void updateInventory(InventoryViewAccessor view) {
             super.updateInventory(view);
             clicked = false;
         }
@@ -197,7 +197,7 @@ public class GuiEditLock extends AbstractGuiModule {
                 InventoryAction action, ClickType click,
                 InventoryType.SlotType slotType, int slot,
                 ItemStack currentItem, ItemStack cursor,
-                InventoryView view, InventoryClickEvent event
+                InventoryViewAccessor view, InventoryClickEvent event
         ) {
             event.setCancelled(true);
             Character clickedId = getClickedId(slot);

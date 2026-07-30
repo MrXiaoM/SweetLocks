@@ -179,7 +179,7 @@ public class ViewContainerManager extends AbstractModule implements Listener {
     public void onDisable() {
         boolean canRunScheduler = true;
         for (Player player : Bukkit.getOnlinePlayers()) {
-            InventoryView view = player.getOpenInventory();
+            InventoryViewAccessor view = Util.getOpenInventory(player);
             InventoryHolder holder = Util.getHolder(view.getTopInventory());
             if (holder instanceof Holder) {
                 if (canRunScheduler) {
