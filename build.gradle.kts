@@ -14,7 +14,7 @@ buildscript {
 val base = LibraryHelper(project)
 
 group = "top.mrxiaom.sweet.locks"
-version = "1.0.7"
+version = "1.0.8"
 val targetJavaVersion = 8
 val pluginBaseModules = base.modules.run{ listOf(library, paper, actions, gui, l10n, misc) }
 val shadowGroup = "top.mrxiaom.sweet.locks.libs"
@@ -39,7 +39,7 @@ dependencies {
     base.library(LibraryHelper.adventure("4.25.0"))
     base.library(LibraryHelper.adventure("4.4.0", listOf("platform-bukkit")))
 
-    implementation(base.depend.nbtapi)
+    implementation("de.tr7zw:item-nbt-api:2.16.0")
     implementation("com.github.technicallycoded:FoliaLib:0.4.4") { isTransitive = false }
     for (artifact in pluginBaseModules) {
         implementation(artifact)
