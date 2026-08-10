@@ -279,7 +279,7 @@ public class GuiEditLock extends AbstractGuiModule {
                 } else {
                     data.addFlags(flag);
                 }
-                plugin.getPlatform().runAtLocation(data.getLocation(), t -> {
+                plugin.getScheduler().runAtLocation(data.getLocation(), () -> {
                     SignLinesFormatter formatter = SignLinesFormatter.inst();
                     data.save(formatter.generateLockSignLines(data));
                     plugin.getScheduler().runTask(() -> updateInventory(getInventory()));
@@ -300,7 +300,7 @@ public class GuiEditLock extends AbstractGuiModule {
                     save = func.apply(message);
                 }
                 if (save) {
-                    plugin.getPlatform().runAtLocation(data.getLocation(), t -> {
+                    plugin.getScheduler().runAtLocation(data.getLocation(), () -> {
                         SignLinesFormatter formatter = SignLinesFormatter.inst();
                         data.save(formatter.generateLockSignLines(data));
                         plugin.getScheduler().runTask(this::open);

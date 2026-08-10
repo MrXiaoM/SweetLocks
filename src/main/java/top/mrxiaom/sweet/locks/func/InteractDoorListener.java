@@ -207,11 +207,11 @@ public class InteractDoorListener extends AbstractModule implements Listener {
                 }
             }
             // 进出收费门
-            plugin.getPlatform().runAtEntity(player, t -> {
+            plugin.getScheduler().runAtEntity(player, () -> {
                 // 传送目标
                 Location target = toCenterLocation(targetBlock);
                 target.setDirection(player.getLocation().getDirection());
-                plugin.getPlatform().teleportAsync(player, target);
+                plugin.getScheduler().teleport(player, target, null);
                 if (isEntering) {
                     if (data.isOwner(player)) {
                         Messages.door__have_entered_owner.tm(player, replacements);

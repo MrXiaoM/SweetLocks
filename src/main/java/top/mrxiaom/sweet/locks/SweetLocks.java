@@ -1,6 +1,5 @@
 package top.mrxiaom.sweet.locks;
 
-import com.tcoded.folialib.impl.PlatformScheduler;
 import de.tr7zw.changeme.nbtapi.utils.MinecraftVersion;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -16,7 +15,6 @@ import top.mrxiaom.pluginbase.resolver.DefaultLibraryResolver;
 import top.mrxiaom.pluginbase.utils.ClassLoaderWrapper;
 import top.mrxiaom.pluginbase.utils.ConfigUpdater;
 import top.mrxiaom.pluginbase.utils.ConfigUtils;
-import top.mrxiaom.pluginbase.utils.scheduler.FoliaLibScheduler;
 
 import java.io.File;
 import java.net.URL;
@@ -29,7 +27,6 @@ public class SweetLocks extends BukkitPlugin {
     }
 
     private final List<String> disableWorlds = new ArrayList<>();
-    private final PlatformScheduler platform;
     private ConfigUpdater configUpdater;
     public SweetLocks() throws Exception {
         super(options()
@@ -40,9 +37,6 @@ public class SweetLocks extends BukkitPlugin {
                 .economy(EnumEconomy.VAULT, true)
                 .scanIgnore("top.mrxiaom.sweet.locks.libs")
         );
-        FoliaLibScheduler scheduler = new FoliaLibScheduler(this);
-        this.scheduler = scheduler;
-        this.platform = scheduler.getFoliaLib().getScheduler();
 
         try {
             //noinspection ResultOfMethodCallIgnored
@@ -71,11 +65,6 @@ public class SweetLocks extends BukkitPlugin {
     @NotNull
     public IEconomy getEconomy() {
         return options.economy();
-    }
-
-    @NotNull
-    public PlatformScheduler getPlatform() {
-        return this.platform;
     }
 
     public boolean isInDisabledWorld(BlockEvent event) {

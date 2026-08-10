@@ -75,7 +75,7 @@ public class LocksCreateListener extends AbstractModule implements Listener {
                 }
                 economy.takeMoney(player, createLocksPrice);
             }
-            plugin.getPlatform().runAtLocationLater(sign.getLocation(), t -> {
+            plugin.getScheduler().runAtLocationLater(sign.getLocation(), () -> {
                 SignLinesFormatter formatter = SignLinesFormatter.inst();
                 LockData data = new LockData(sign, player, createDefaultPrice, createDefaultReachEnter, createDefaultReachLeave);
                 data.addFlags("can-enter", "can-leave");
